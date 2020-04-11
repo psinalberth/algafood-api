@@ -12,3 +12,10 @@ objetivo do projeto é desenvolver uma API para uma empresa de delivery de comid
 * [Lombok](https://projectlombok.org/)
 * [MapStruct](https://mapstruct.org/)
 * [Swagger](https://swagger.io/)
+
+## Instalação
+```
+cd algafood-api
+mvn compile
+mvn spring-boot:run
+```

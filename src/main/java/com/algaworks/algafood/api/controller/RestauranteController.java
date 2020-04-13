@@ -4,10 +4,12 @@ import com.algaworks.algafood.api.model.mapper.RestauranteMapper;
 import com.algaworks.algafood.api.model.request.RestauranteRequest;
 import com.algaworks.algafood.api.model.response.RestauranteResponse;
 import com.algaworks.algafood.api.model.response.RestauranteResumidoResponse;
+import com.algaworks.algafood.api.model.view.RestauranteView;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.service.RestauranteService;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +33,12 @@ public class RestauranteController {
     public List<RestauranteResumidoResponse> listar() {
         List<Restaurante> restaurantes = service.listar();
         return mapper.toFilteredCollectionResponse(restaurantes);
+    }
+
+    @JsonView(RestauranteView.ApenasNome.class)
+    @GetMapping(params = "projecao=apenas-nome")
+    public List<RestauranteResumidoResponse> listarSomenteNomes() {
+        return listar();
     }
 
     @GetMapping("/{restauranteId}")

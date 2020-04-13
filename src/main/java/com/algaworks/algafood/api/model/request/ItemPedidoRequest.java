@@ -10,11 +10,11 @@ import javax.validation.constraints.Positive;
 @Setter
 public class ItemPedidoRequest {
 
-    @NotNull(message = "{item.produtoId.not.null}")
+    @NotNull(message = "{NotNull.item.produtoId}")
     private Long produtoId;
 
-    @NotNull(message = "{item.quantidade.not.null}")
-    @Positive
+    @NotNull(message = "{NotNull.item.quantidade}")
+    @Positive(message = "{Positive.item.quantidade}")
     private Integer quantidade;
 
     private String observacao;

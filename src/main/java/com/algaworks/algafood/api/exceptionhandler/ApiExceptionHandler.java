@@ -133,6 +133,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                             String name = (objectError instanceof FieldError) ?
                                     ((FieldError) objectError).getField() : objectError.getObjectName();
 
+                            if (message.matches("(.*)\\[\\d+\\](.*)"))
+                                message = objectError.getDefaultMessage();
+
                             return ApiProblem.Detail.builder()
                                     .name(name)
                                     .userMessage(message)

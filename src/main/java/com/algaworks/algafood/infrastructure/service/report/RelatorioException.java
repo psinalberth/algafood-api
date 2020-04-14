@@ -1,4 +1,4 @@
-package com.algaworks.algafood.infrastructure.service;
+package com.algaworks.algafood.infrastructure.service.report;
 
 public class RelatorioException extends RuntimeException {
 

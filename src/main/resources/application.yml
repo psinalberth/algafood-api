@@ -27,3 +27,12 @@ reports:
     path: /relatorios
 server:
   port: 8080
+algafood:
+  storage:
+    local:
+      directory: /catalogo
+    s3:
+      bucket-name: ps-algafood-test
+      region: us-east-1
+      directory: catalogo
+    type: s3

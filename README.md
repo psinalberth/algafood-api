@@ -12,6 +12,7 @@ objetivo do projeto é desenvolver uma API para uma empresa de delivery de comid
 * [Lombok](https://projectlombok.org/)
 * [MapStruct](https://mapstruct.org/)
 * [Swagger](https://swagger.io/)
+* [Amazon S3](https://aws.amazon.com/s3/)
 
 ## Instalação
 ```

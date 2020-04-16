@@ -8,15 +8,19 @@ import com.algaworks.algafood.domain.model.FotoProduto;
 import com.algaworks.algafood.domain.model.Produto;
 import com.algaworks.algafood.domain.service.FotoProdutoService;
 import com.algaworks.algafood.domain.service.FotoStorageService;
+import com.algaworks.algafood.domain.service.FotoStorageService.FotoRecuperada;
 import com.algaworks.algafood.domain.service.ProdutoService;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.List;
 
 @RestController
 @RequestMapping("/restaurantes/{restauranteId}/produtos/{produtoId}/foto")
@@ -51,18 +55,49 @@ public class RestauranteProdutoFotoController {
     }
 
     @GetMapping
-    public ResponseEntity<?> exibir(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
+    public ResponseEntity<?> exibir(@PathVariable Long restauranteId, @PathVariable Long produtoId,
+                                    @RequestHeader(name = "accept") String acceptHeader)
+            throws HttpMediaTypeNotAcceptableException {
         try {
 
             FotoProduto fotoProduto = service.buscarOuFalhar(restauranteId, produtoId);
-            InputStream inputStream = storageService.recuperar(fotoProduto.getNomeArquivo());
 
-            return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_JPEG)
-                    .body(new InputStreamResource(inputStream));
+            MediaType mediaTypeFoto = MediaType.parseMediaType(fotoProduto.getContentType());
+            List<MediaType> mediaTypesPermitidas = MediaType.parseMediaTypes(acceptHeader);
+
+            validarMediaTypeFoto(mediaTypeFoto, mediaTypesPermitidas);
+
+            FotoRecuperada fotoRecuperada = storageService.recuperar(fotoProduto.getNomeArquivo());
+
+            if (fotoRecuperada.temInputStream()) {
+
+                return ResponseEntity.ok()
+                        .contentType(mediaTypeFoto)
+                        .body(new InputStreamResource(fotoRecuperada.getInputStream()));
+            }
+
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .header(HttpHeaders.LOCATION, fotoRecuperada.getUrl())
+                    .build();
 
         } catch (EntidadeNaoEncontradaException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void excluir(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
+        service.excluir(restauranteId, produtoId);
+    }
+
+    private void validarMediaTypeFoto(MediaType mediaType, List<MediaType> mediaTypesAceitas) throws HttpMediaTypeNotAcceptableException {
+
+        boolean mediaTypePermitida = mediaTypesAceitas.stream()
+                .anyMatch(mediaType::isCompatibleWith);
+
+        if (!mediaTypePermitida) {
+            throw new HttpMediaTypeNotAcceptableException(mediaTypesAceitas);
         }
     }
 }

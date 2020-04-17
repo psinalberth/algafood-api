@@ -6,6 +6,10 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration,classpath:db/testdata
+  freemarker:
+    settings:
+      locale: pt_BR
+    suffix: .html
   jackson:
     default-property-inclusion: NON_NULL
   jpa:
@@ -22,16 +26,28 @@ spring:
           characterEncoding: UTF-8
           charSet: UTF-8
           useUnicode: true
+  mail:
+    host: smtp.sendgrid.net
+    port: 587
+    username: apikey
+    password:
 reports:
   jasper:
     path: /relatorios
 server:
   port: 8080
 algafood:
+  email:
+    sandbox:
+      recipient: test.algafood@gmail.com
+    sender: Algafood <test.algafood@gmail.com>
+    type: fake
   storage:
     local:
       directory: /catalogo
     s3:
+      access-key-id:
+      secret-access-key:
       bucket-name: ps-algafood-test
       region: us-east-1
       directory: catalogo

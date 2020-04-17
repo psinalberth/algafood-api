@@ -121,12 +121,15 @@ VALUES(1, NULL, 'augusto.jota@algafood.com', 'Augusto Jota', NULL);
 INSERT INTO usuario
 (id, data_cadastro, email, nome, senha)
 VALUES(2, NULL, 'arreis@pedidos.com.br', 'Alessandra Reis', NULL);
+INSERT INTO usuario
+(id, data_cadastro, email, nome, senha)
+VALUES(3, NULL, 'test.algafood@gmail.com', 'Donnie Darko', NULL);
 
 -- Pedido
 
 INSERT INTO pedido
 (id, data_atualizacao, data_criacao, codigo, data_cancelamento, data_confirmacao, data_entrega, endereco_bairro, endereco_cep, endereco_complemento, endereco_logradouro, endereco_numero, status, subtotal, taxa_frete, valor_total, cliente_id, endereco_cidade_id, forma_pagamento_id, restaurante_id)
-VALUES(1, '2020-04-11 00:03:25', '2020-04-11 00:03:25', '05d2b496-9751-4d4d-9875-71444271fc25', NULL, NULL, NULL, 'Cohafuma', '65477-468', NULL, 'Avenida A', '5B', 'CRIADO', 116.00, 7.50, 123.50, 1, 5, 1, 1);
+VALUES(1, '2020-04-11 00:03:25', '2020-04-11 00:03:25', '05d2b496-9751-4d4d-9875-71444271fc25', NULL, NULL, NULL, 'Cohafuma', '65477-468', NULL, 'Avenida A', '5B', 'CRIADO', 116.00, 7.50, 123.50, 3, 5, 1, 1);
 
 INSERT INTO item_pedido
 (id, data_atualizacao, data_criacao, observacao, preco_total, preco_unitario, quantidade, pedido_id, produto_id)

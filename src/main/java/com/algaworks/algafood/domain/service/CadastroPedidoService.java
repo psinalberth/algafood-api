@@ -35,7 +35,7 @@ public class CadastroPedidoService {
 
     @Transactional
     public Pedido salvar(Pedido pedido) {
-        Usuario usuario = usuarioService.buscarOuFalhar(1L);
+        Usuario usuario = usuarioService.buscarOuFalhar(3L);
         pedido.setCliente(usuario);
         validarPedido(pedido);
         validarItensPedido(pedido);

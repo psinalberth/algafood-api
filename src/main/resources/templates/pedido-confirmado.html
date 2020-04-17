@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<body style="font-family: Arial, Helvetica, sans-serif; color: #777">
+<h1 style="color: #555">Pedido Confirmado!</h1>
+<p>${ pedido.cliente.nome }, seu pedido de código
+    <strong>${ pedido.codigo }</strong>
+    foi confirmado e já está sendo preparado.</p>
+
+<h2 style="color: #555">${ pedido.restaurante.nome }</h2>
+
+<table border="1"
+       style="width: 100%; font-family: Arial, Helvetica, sans-serif;
+              color: #555; text-align: center; word-break: break-all;
+              border-collapse: collapse; border-color: #bababa">
+    <thead style="font-size: 1.25rem; background-color: #1e94d2; color: white">
+    <tr height="40px">
+        <th width="100px">Quantidade</th>
+        <th width="300px">Item</th>
+        <th width="100px">Valor</th>
+        <th width="100px">Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    <#list pedido.itens as item>
+    <tr height="50px">
+        <td>${ item.quantidade }</td>
+        <td style="padding: 0 3.5rem">${ item.produto.nome }</td>
+        <td>${ item.precoUnitario?string.currency }</td>
+        <td>${ item.precoTotal?string.currency }</td>
+    </tr>
+    </#list>
+    </tbody>
+    <tfoot>
+    <tr height="40px">
+        <td></td>
+        <td></td>
+        <td style="font-weight: bold">Subtotal</td>
+        <td>${ pedido.subtotal?string.currency }</td>
+    </tr>
+    <tr height="40px">
+        <td></td>
+        <td></td>
+        <td style="font-weight: bold">Frete</td>
+        <td>${ pedido.taxaFrete?string.currency }</td>
+    </tr>
+    <tr height="40px" style="font-weight: bold; background-color: whitesmoke">
+        <td></td>
+        <td></td>
+        <td>Total</td>
+        <td>${ pedido.valorTotal?string.currency }</td>
+    </tr>
+    </tfoot>
+</table>
+
+<h2 style="color: #555">Endereço de Entrega</h2>
+<table style="text-align: right">
+    <tbody>
+    <tr>
+        <td style="color: #555; font-weight: bold">Logradouro:</td>
+        <td style="text-align: left">${ pedido.enderecoEntrega.logradouro }, ${ pedido.enderecoEntrega.numero }</td>
+    </tr>
+    <#if pedido.enderecoEntrega.complemento?has_content>
+    <tr>
+        <td style="color: #555; font-weight: bold">Complemento:</td>
+        <td style="text-align: left">${ pedido.enderecoEntrega.complemento }</td>
+    </tr>
+    </#if>
+    <tr>
+        <td style="color: #555; font-weight: bold">Bairro:</td>
+        <td style="text-align: left">${ pedido.enderecoEntrega.bairro }</td>
+    </tr>
+    <tr>
+        <td style="color: #555; font-weight: bold">Cidade:</td>
+        <td style="text-align: left">${ pedido.enderecoEntrega.cidade.nome }</td>
+    </tr>
+    <tr>
+        <td style="color: #555; font-weight: bold">CEP:</td>
+        <td style="text-align: left">${ pedido.enderecoEntrega.cep }</td>
+    </tr>
+    </tbody>
+</table>
+
+<h2 style="color: #555">Forma de Pagamento</h2>
+<p style="color: #777">${ pedido.formaPagamento.descricao }</p>
+</body>
+</html>

@@ -3,23 +3,18 @@ package com.algaworks.algafood.domain.service;
 import com.algaworks.algafood.domain.event.PedidoCanceladoEvent;
 import com.algaworks.algafood.domain.event.PedidoConfirmadoEvent;
 import com.algaworks.algafood.domain.model.Pedido;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.algaworks.algafood.domain.service.EnvioEmailService.*;
 
 @Service
 public class AtualizacaoPedidoService {
 
     final CadastroPedidoService cadastroPedido;
-    final EnvioEmailService emailService;
     final ApplicationEventPublisher eventPublisher;
 
-    public AtualizacaoPedidoService(CadastroPedidoService cadastroPedido, EnvioEmailService emailService, ApplicationEventPublisher eventPublisher) {
+    public AtualizacaoPedidoService(CadastroPedidoService cadastroPedido, ApplicationEventPublisher eventPublisher) {
         this.cadastroPedido = cadastroPedido;
-        this.emailService = emailService;
         this.eventPublisher = eventPublisher;
     }
 

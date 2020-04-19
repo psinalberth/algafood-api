@@ -15,5 +15,5 @@ public class RestauranteResponse {
     private BigDecimal taxaFrete;
     private EnderecoResponse endereco;
     private boolean ativo;
-    private boolean fechado;
+    private boolean aberto;
 }

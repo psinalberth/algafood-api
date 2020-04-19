@@ -1,5 +1,6 @@
 package com.algaworks.algafood.domain.model;
 
+import com.algaworks.algafood.domain.exception.NegocioException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
@@ -66,6 +67,17 @@ public class Pedido extends EntidadeBase {
     public void cancelar() {
         setStatus(StatusPedido.CANCELADO);
         setDataCancelamento(OffsetDateTime.now());
+    }
+
+    public void setStatus(StatusPedido status) {
+        var mensagem = String.format("Status do pedido %s não pode ser alterado de %s para %s.",
+                getCodigo(), getStatus().getDescricao(), status.getDescricao());
+
+        if (!getStatus().isNovoStatusPermitido(status)) {
+            throw new NegocioException(mensagem);
+        }
+
+        this.status = status;
     }
 
     public void calcularValorTotal() {

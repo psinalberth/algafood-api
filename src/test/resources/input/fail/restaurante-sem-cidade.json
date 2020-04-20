@@ -1,0 +1,13 @@
+{
+  "nome": "Thai",
+  "cozinha": {
+    "id": 6
+  },
+  "endereco": {
+    "logradouro": "Av. dos Holandeses",
+    "numero": "200 - L-02",
+    "bairro": "Calhau",
+    "cep": "65077-357"
+  },
+  "taxaFrete": 7.50
+}

@@ -1,4 +1,4 @@
-package com.algaworks.algafood;
+package com.algaworks.algafood.restassured;
 
 import com.algaworks.algafood.util.JsonStringLoader;
 import io.restassured.RestAssured;

@@ -1,0 +1,16 @@
+{
+  "nome": "JavaBeans Gourmet",
+  "cozinha": {
+    "id": 5
+  },
+  "endereco": {
+    "logradouro": "Av. dos Holandeses",
+    "numero": "203 - L-02",
+    "bairro": "Calhau",
+    "cidade": {
+      "id": 5
+    },
+    "cep": "65077-357"
+  },
+  "taxaFrete": 9.90
+}

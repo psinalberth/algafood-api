@@ -1,4 +1,4 @@
-package com.algaworks.algafood;
+package com.algaworks.algafood.restassured;
 
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.repository.CozinhaRepository;

@@ -3,6 +3,7 @@ package com.algaworks.algafood.api.controller;
 import com.algaworks.algafood.api.model.mapper.CidadeMapper;
 import com.algaworks.algafood.api.model.request.CidadeRequest;
 import com.algaworks.algafood.api.model.response.CidadeResponse;
+import com.algaworks.algafood.api.openapi.controller.CidadeControllerOpenApi;
 import com.algaworks.algafood.domain.exception.EstadoNaoEncontradoException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Cidade;
@@ -20,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/cidades", produces = MediaType.APPLICATION_JSON_VALUE)
-public class CidadeController implements com.algaworks.algafood.api.openapi.controller.CidadeControllerOpenApi {
+public class CidadeController implements CidadeControllerOpenApi {
 
     final CidadeService service;
     final CidadeMapper mapper;

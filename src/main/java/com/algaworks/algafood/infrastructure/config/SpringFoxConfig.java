@@ -1,15 +1,23 @@
 package com.algaworks.algafood.infrastructure.config;
 
 import com.algaworks.algafood.api.exceptionhandler.ApiProblem;
+import com.algaworks.algafood.api.model.response.CidadeResponse;
+import com.algaworks.algafood.api.model.response.CozinhaResponse;
+import com.algaworks.algafood.api.model.response.PedidoResumidoResponse;
+import com.algaworks.algafood.api.openapi.model.PageCidadeResponseOpenApi;
+import com.algaworks.algafood.api.openapi.model.PageCozinhaResponseOpenApi;
+import com.algaworks.algafood.api.openapi.model.PagePedidoResumidoResponseOpenApi;
 import com.algaworks.algafood.api.openapi.model.PageableOpenApi;
 import com.fasterxml.classmate.TypeResolver;
 import com.google.common.base.Predicates;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
@@ -17,6 +25,7 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.ResponseMessageBuilder;
+import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
@@ -48,9 +57,27 @@ public class SpringFoxConfig implements WebMvcConfigurer {
                 .globalResponseMessage(RequestMethod.POST, globalListPostPutResponseMessages())
                 .globalResponseMessage(RequestMethod.PUT, globalListPostPutResponseMessages())
                 .globalResponseMessage(RequestMethod.DELETE, globalListDeleteResponseMessages())
+                .ignoredParameterTypes(ServletWebRequest.class)
                 .additionalModels(typeResolver.resolve(ApiProblem.class))
                 .directModelSubstitute(Pageable.class, PageableOpenApi.class)
-                .tags(new Tag("Cidades", "Gerencia as cidades"))
+                .alternateTypeRules(AlternateTypeRules.newRule(
+                        typeResolver.resolve(Page.class, CidadeResponse.class),
+                        PageCidadeResponseOpenApi.class
+                ))
+                .alternateTypeRules(AlternateTypeRules.newRule(
+                        typeResolver.resolve(Page.class, CozinhaResponse.class),
+                        PageCozinhaResponseOpenApi.class
+                ))
+                .alternateTypeRules(AlternateTypeRules.newRule(
+                        typeResolver.resolve(Page.class, PedidoResumidoResponse.class),
+                        PagePedidoResumidoResponseOpenApi.class
+                ))
+                .tags(
+                        new Tag("Cidades", "Gerencia as cidades"),
+                        new Tag("Cozinhas", "Gerencia as cozinhas"),
+                        new Tag("Formas de Pagamento", "Gerencia as formas de pagamento"),
+                        new Tag("Pedidos", "Gerencia os pedidos")
+                )
                 .apiInfo(apiInfo());
     }
 

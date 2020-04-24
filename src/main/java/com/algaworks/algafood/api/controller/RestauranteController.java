@@ -5,21 +5,22 @@ import com.algaworks.algafood.api.model.request.RestauranteRequest;
 import com.algaworks.algafood.api.model.response.RestauranteResponse;
 import com.algaworks.algafood.api.model.response.RestauranteResumidoResponse;
 import com.algaworks.algafood.api.model.view.RestauranteView;
+import com.algaworks.algafood.api.openapi.controller.RestauranteControllerOpenApi;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.service.RestauranteService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/restaurantes")
-public class RestauranteController {
+@RequestMapping(path = "/restaurantes", produces = MediaType.APPLICATION_JSON_VALUE)
+public class RestauranteController implements RestauranteControllerOpenApi {
 
     final RestauranteService service;
     final RestauranteMapper mapper;
@@ -29,65 +30,75 @@ public class RestauranteController {
         this.mapper = mapper;
     }
 
+    @Override
     @GetMapping
     public List<RestauranteResumidoResponse> listar() {
         List<Restaurante> restaurantes = service.listar();
         return mapper.toFilteredCollectionResponse(restaurantes);
     }
 
+    @Override
     @JsonView(RestauranteView.ApenasNome.class)
     @GetMapping(params = "projecao=apenas-nome")
     public List<RestauranteResumidoResponse> listarSomenteNomes() {
         return listar();
     }
 
+    @Override
     @GetMapping("/{restauranteId}")
     public RestauranteResponse buscar(@PathVariable Long restauranteId) {
         Restaurante restaurante = service.buscarOuFalhar(restauranteId);
         return mapper.toResponse(restaurante);
     }
 
+    @Override
     @PostMapping
-    public ResponseEntity<RestauranteResponse> salvar(@Valid @RequestBody RestauranteRequest request) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public RestauranteResponse salvar(@Valid @RequestBody RestauranteRequest request) {
         try {
             Restaurante restaurante = service.salvar(mapper.toModel(request));
-            return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(restaurante));
+            return mapper.toResponse(restaurante);
         } catch (EntidadeNaoEncontradaException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }
     }
 
+    @Override
     @PutMapping("/{restauranteId}")
-    public ResponseEntity<RestauranteResponse> atualizar(@PathVariable Long restauranteId,
-                                                         @Valid @RequestBody RestauranteRequest request) {
+    public RestauranteResponse atualizar(@PathVariable Long restauranteId,
+                                         @Valid @RequestBody RestauranteRequest request) {
         try {
             Restaurante restauranteSalvo = service.buscarOuFalhar(restauranteId);
             restauranteSalvo = mapper.toModelCopy(restauranteSalvo, request);
             restauranteSalvo = service.salvar(restauranteSalvo);
-            return ResponseEntity.ok(mapper.toResponse(restauranteSalvo));
+            return mapper.toResponse(restauranteSalvo);
         } catch (EntidadeNaoEncontradaException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }
     }
 
+    @Override
     @PutMapping("/{restauranteId}/ativo")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void ativar(@PathVariable Long restauranteId) {
         service.ativar(restauranteId);
     }
 
+    @Override
     @DeleteMapping("/{restauranteId}/ativo")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void inativar(@PathVariable Long restauranteId) {
         service.inativar(restauranteId);
     }
 
+    @Override
     @PutMapping("/{restauranteId}/abertura")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void abrir(@PathVariable Long restauranteId) {
         service.abrir(restauranteId);
     }
 
+    @Override
     @PutMapping("/{restauranteId}/fechamento")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void fechar(@PathVariable Long restauranteId) {

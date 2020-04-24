@@ -3,18 +3,19 @@ package com.algaworks.algafood.api.controller;
 import com.algaworks.algafood.api.model.mapper.EstadoMapper;
 import com.algaworks.algafood.api.model.request.EstadoRequest;
 import com.algaworks.algafood.api.model.response.EstadoResponse;
+import com.algaworks.algafood.api.openapi.controller.EstadoControllerOpenApi;
 import com.algaworks.algafood.domain.model.Estado;
 import com.algaworks.algafood.domain.service.EstadoService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/estados")
-public class EstadoController {
+@RequestMapping(path = "/estados", produces = MediaType.APPLICATION_JSON_VALUE)
+public class EstadoController implements EstadoControllerOpenApi {
 
     final EstadoService service;
     final EstadoMapper mapper;
@@ -24,33 +25,39 @@ public class EstadoController {
         this.mapper = mapper;
     }
 
+    @Override
     @GetMapping
     public List<EstadoResponse> listar() {
         List<Estado> estados = service.listar();
         return mapper.toCollectionResponse(estados);
     }
 
+    @Override
     @GetMapping("/{estadoId}")
     public EstadoResponse buscar(@PathVariable Long estadoId) {
         Estado estado = service.buscarOuFalhar(estadoId);
         return mapper.toResponse(estado);
     }
 
+    @Override
     @PostMapping
-    public ResponseEntity<EstadoResponse> salvar(@Valid @RequestBody EstadoRequest request) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public EstadoResponse salvar(@Valid @RequestBody EstadoRequest request) {
         Estado estado = service.salvar(mapper.toModel(request));
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(estado));
+        return mapper.toResponse(estado);
     }
 
+    @Override
     @PutMapping("/{estadoId}")
-    public ResponseEntity<EstadoResponse> atualizar(@PathVariable Long estadoId,
-                                                    @Valid @RequestBody EstadoRequest request) {
+    public EstadoResponse atualizar(@PathVariable Long estadoId,
+                                    @Valid @RequestBody EstadoRequest request) {
         Estado estadoSalvo = service.buscarOuFalhar(estadoId);
         estadoSalvo = mapper.toModelCopy(estadoSalvo, request);
         estadoSalvo = service.salvar(estadoSalvo);
-        return ResponseEntity.ok(mapper.toResponse(estadoSalvo));
+        return mapper.toResponse(estadoSalvo);
     }
 
+    @Override
     @DeleteMapping("/{estadoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long estadoId) {

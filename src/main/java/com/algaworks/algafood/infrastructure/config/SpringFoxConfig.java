@@ -13,6 +13,7 @@ import com.google.common.base.Predicates;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,11 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLStreamHandler;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,7 +63,9 @@ public class SpringFoxConfig implements WebMvcConfigurer {
                 .globalResponseMessage(RequestMethod.POST, globalListPostPutResponseMessages())
                 .globalResponseMessage(RequestMethod.PUT, globalListPostPutResponseMessages())
                 .globalResponseMessage(RequestMethod.DELETE, globalListDeleteResponseMessages())
-                .ignoredParameterTypes(ServletWebRequest.class)
+                .ignoredParameterTypes(ServletWebRequest.class, URL.class, URI.class,
+                                       URLStreamHandler.class, Resource.class, File.class,
+                                       InputStream.class)
                 .additionalModels(typeResolver.resolve(ApiProblem.class))
                 .directModelSubstitute(Pageable.class, PageableOpenApi.class)
                 .alternateTypeRules(AlternateTypeRules.newRule(
@@ -76,9 +84,14 @@ public class SpringFoxConfig implements WebMvcConfigurer {
                         new Tag("Cidades", "Gerencia as cidades"),
                         new Tag("Cozinhas", "Gerencia as cozinhas"),
                         new Tag("Estados", "Gerencia os estados"),
+                        new Tag("Estatísticas", "Estatísticas da Algafood"),
                         new Tag("Formas de Pagamento", "Gerencia as formas de pagamento"),
+                        new Tag("Grupos", "Gerencia os grupos de usuário"),
                         new Tag("Pedidos", "Gerencia os pedidos"),
-                        new Tag("Restaurantes", "Gerencia os restaurantes")
+                        new Tag("Permissões", "Gerencia as permissões de usuário"),
+                        new Tag("Produtos", "Gerencia os produtos de restaurantes"),
+                        new Tag("Restaurantes", "Gerencia os restaurantes"),
+                        new Tag("Usuários", "Gerencia os usuários")
                 )
                 .apiInfo(apiInfo());
     }

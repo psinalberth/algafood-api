@@ -1,6 +1,7 @@
 package com.algaworks.algafood.api.model.mapper;
 
 import com.algaworks.algafood.api.model.request.UsuarioRequest;
+import com.algaworks.algafood.api.model.request.UsuarioSenhaRequest;
 import com.algaworks.algafood.api.model.response.UsuarioResponse;
 import com.algaworks.algafood.domain.model.Usuario;
 import org.mapstruct.Mapper;
@@ -13,6 +14,8 @@ import java.util.List;
 public interface UsuarioMapper {
 
     Usuario toModel(UsuarioRequest request);
+
+    Usuario toModel(UsuarioSenhaRequest request);
 
     Usuario toModelCopy(@MappingTarget Usuario usuario, UsuarioRequest request);
 

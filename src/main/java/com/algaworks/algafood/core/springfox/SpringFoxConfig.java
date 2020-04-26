@@ -1,4 +1,4 @@
-package com.algaworks.algafood.infrastructure.config;
+package com.algaworks.algafood.core.springfox;
 
 import com.algaworks.algafood.api.exceptionhandler.ApiProblem;
 import com.algaworks.algafood.api.model.response.CidadeResponse;

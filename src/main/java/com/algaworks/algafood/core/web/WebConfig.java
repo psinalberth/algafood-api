@@ -1,4 +1,4 @@
-package com.algaworks.algafood.infrastructure.config;
+package com.algaworks.algafood.core.web;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

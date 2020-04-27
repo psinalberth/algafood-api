@@ -13,14 +13,14 @@ import java.util.List;
 @Mapper
 public interface GrupoMapper {
 
-    Grupo toModel(GrupoRequest request);
+    Grupo toDomain(GrupoRequest request);
 
-    Grupo toModelCopy(@MappingTarget Grupo grupo, GrupoRequest request);
+    Grupo toDomainCopy(@MappingTarget Grupo grupo, GrupoRequest request);
 
     @Mapping(target = "id", source = "grupoId")
     Grupo map(Long grupoId);
 
-    GrupoResponse toResponse(Grupo grupo);
+    GrupoResponse toModel(Grupo grupo);
 
-    List<GrupoResponse> toCollectionResponse(Collection<Grupo> grupos);
+    List<GrupoResponse> toCollectionModel(Collection<Grupo> grupos);
 }

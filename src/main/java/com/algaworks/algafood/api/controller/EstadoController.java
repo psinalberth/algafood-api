@@ -6,6 +6,7 @@ import com.algaworks.algafood.api.model.response.EstadoResponse;
 import com.algaworks.algafood.api.openapi.controller.EstadoControllerOpenApi;
 import com.algaworks.algafood.domain.model.Estado;
 import com.algaworks.algafood.domain.service.EstadoService;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -27,24 +28,24 @@ public class EstadoController implements EstadoControllerOpenApi {
 
     @Override
     @GetMapping
-    public List<EstadoResponse> listar() {
+    public CollectionModel<EstadoResponse> listar() {
         List<Estado> estados = service.listar();
-        return mapper.toCollectionResponse(estados);
+        return mapper.toCollectionModel(estados);
     }
 
     @Override
     @GetMapping("/{estadoId}")
     public EstadoResponse buscar(@PathVariable Long estadoId) {
         Estado estado = service.buscarOuFalhar(estadoId);
-        return mapper.toResponse(estado);
+        return mapper.toModel(estado);
     }
 
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EstadoResponse salvar(@Valid @RequestBody EstadoRequest request) {
-        Estado estado = service.salvar(mapper.toModel(request));
-        return mapper.toResponse(estado);
+        Estado estado = service.salvar(mapper.toDomain(request));
+        return mapper.toModel(estado);
     }
 
     @Override
@@ -52,9 +53,9 @@ public class EstadoController implements EstadoControllerOpenApi {
     public EstadoResponse atualizar(@PathVariable Long estadoId,
                                     @Valid @RequestBody EstadoRequest request) {
         Estado estadoSalvo = service.buscarOuFalhar(estadoId);
-        estadoSalvo = mapper.toModelCopy(estadoSalvo, request);
+        estadoSalvo = mapper.toDomainCopy(estadoSalvo, request);
         estadoSalvo = service.salvar(estadoSalvo);
-        return mapper.toResponse(estadoSalvo);
+        return mapper.toModel(estadoSalvo);
     }
 
     @Override

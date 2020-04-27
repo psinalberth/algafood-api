@@ -31,7 +31,7 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
     @GetMapping
     public List<FormaPagamentoResponse> listar(@PathVariable Long restauranteId) {
         Restaurante restaurante = restauranteService.buscarOuFalhar(restauranteId);
-        return formaPagamentoMapper.toCollectionResponse(new ArrayList<>(restaurante.getFormasPagamento()));
+        return formaPagamentoMapper.toCollectionModel(new ArrayList<>(restaurante.getFormasPagamento()));
     }
 
     @Override

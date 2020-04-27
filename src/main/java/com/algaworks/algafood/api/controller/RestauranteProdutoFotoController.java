@@ -46,18 +46,18 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
     public FotoProdutoResponse atualizar(@PathVariable Long restauranteId, @PathVariable Long produtoId,
                                          @Valid FotoProdutoRequest request,
                                          @RequestPart MultipartFile arquivo) throws IOException {
-        FotoProduto fotoProduto = mapper.toModel(request);
+        FotoProduto fotoProduto = mapper.toDomain(request);
         Produto produto = produtoService.buscarOuFalhar(restauranteId, produtoId);
         fotoProduto.setProduto(produto);
         fotoProduto = service.salvar(fotoProduto, request.getArquivo().getInputStream());
-        return mapper.toResponse(fotoProduto);
+        return mapper.toModel(fotoProduto);
     }
 
     @Override
     @GetMapping
     public FotoProdutoResponse buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
         FotoProduto fotoProduto = service.buscarOuFalhar(restauranteId, produtoId);
-        return mapper.toResponse(fotoProduto);
+        return mapper.toModel(fotoProduto);
     }
 
     @Override

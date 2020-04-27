@@ -5,14 +5,14 @@ import com.algaworks.algafood.api.model.request.PedidoRequest;
 import com.algaworks.algafood.api.model.response.PedidoResponse;
 import com.algaworks.algafood.api.model.response.PedidoResumidoResponse;
 import io.swagger.annotations.*;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedModel;
 
 @Api(tags = "Pedidos")
 public interface CadastroPedidoControllerOpenApi {
 
     @ApiOperation("Lista os pedidos com paginação")
-    Page<PedidoResumidoResponse> listar(Pageable pageable);
+    PagedModel<PedidoResumidoResponse> listar(Pageable pageable);
 
     @ApiOperation("Busca um pedido por código")
     @ApiResponses({

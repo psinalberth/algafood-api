@@ -29,22 +29,22 @@ public class GrupoController implements GrupoControllerOpenApi {
     @GetMapping
     public List<GrupoResponse> listar() {
         List<Grupo> grupos = service.listar();
-        return mapper.toCollectionResponse(grupos);
+        return mapper.toCollectionModel(grupos);
     }
 
     @Override
     @GetMapping("/{grupoId}")
     public GrupoResponse buscar(@PathVariable Long grupoId) {
         Grupo grupo = service.buscarOuFalhar(grupoId);
-        return mapper.toResponse(grupo);
+        return mapper.toModel(grupo);
     }
 
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public GrupoResponse salvar(@Valid @RequestBody GrupoRequest request) {
-        Grupo grupo = service.salvar(mapper.toModel(request));
-        return mapper.toResponse(grupo);
+        Grupo grupo = service.salvar(mapper.toDomain(request));
+        return mapper.toModel(grupo);
     }
 
     @Override
@@ -52,9 +52,9 @@ public class GrupoController implements GrupoControllerOpenApi {
     public GrupoResponse atualizar(@PathVariable Long grupoId,
                                                    @Valid @RequestBody GrupoRequest request) {
         Grupo grupo = service.buscarOuFalhar(grupoId);
-        grupo = mapper.toModelCopy(grupo, request);
+        grupo = mapper.toDomainCopy(grupo, request);
         grupo = service.salvar(grupo);
-        return mapper.toResponse(grupo);
+        return mapper.toModel(grupo);
     }
 
     @Override

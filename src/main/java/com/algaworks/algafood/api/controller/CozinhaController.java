@@ -33,7 +33,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
     @GetMapping
     public Page<CozinhaResponse> listar(@PageableDefault(size = 20) Pageable pageable) {
         Page<Cozinha> cozinhasPage = service.listar(pageable);
-        List<CozinhaResponse> cozinhas = mapper.toCollectionResponse(cozinhasPage.getContent());
+        List<CozinhaResponse> cozinhas = mapper.toCollectionModel(cozinhasPage.getContent());
         return new PageImpl<>(cozinhas, pageable, cozinhasPage.getTotalElements());
     }
 
@@ -41,15 +41,15 @@ public class CozinhaController implements CozinhaControllerOpenApi {
     @GetMapping("/{cozinhaId}")
     public CozinhaResponse buscar(@PathVariable Long cozinhaId) {
         Cozinha cozinha = service.buscarOuFalhar(cozinhaId);
-        return mapper.toResponse(cozinha);
+        return mapper.toModel(cozinha);
     }
 
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CozinhaResponse salvar(@Valid @RequestBody CozinhaRequest request) {
-        Cozinha cozinha = service.salvar(mapper.toModel(request));
-        return mapper.toResponse(cozinha);
+        Cozinha cozinha = service.salvar(mapper.toDomain(request));
+        return mapper.toModel(cozinha);
     }
 
     @Override
@@ -57,9 +57,9 @@ public class CozinhaController implements CozinhaControllerOpenApi {
     public CozinhaResponse atualizar(@PathVariable Long cozinhaId,
                                      @Valid @RequestBody CozinhaRequest request) {
         Cozinha cozinhaSalva = service.buscarOuFalhar(cozinhaId);
-        cozinhaSalva = mapper.toModelCopy(cozinhaSalva, request);
+        cozinhaSalva = mapper.toDomainCopy(cozinhaSalva, request);
         cozinhaSalva = service.salvar(cozinhaSalva);
-        return mapper.toResponse(cozinhaSalva);
+        return mapper.toModel(cozinhaSalva);
     }
 
     @Override

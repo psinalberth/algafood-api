@@ -30,22 +30,22 @@ public class PermissaoController implements PermissaoControllerOpenApi {
     @GetMapping
     public List<PermissaoResponse> listar() {
         List<Permissao> permissoes = service.listar();
-        return mapper.toCollectionResponse(permissoes);
+        return mapper.toCollectionModel(permissoes);
     }
 
     @Override
     @GetMapping("/{permissaoId}")
     public PermissaoResponse buscar(@PathVariable Long permissaoId) {
         Permissao permissao = service.buscarOuFalhar(permissaoId);
-        return mapper.toResponse(permissao);
+        return mapper.toModel(permissao);
     }
 
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PermissaoResponse salvar(@Valid @RequestBody PermissaoRequest request) {
-        Permissao permissao = service.salvar(mapper.toModel(request));
-        return mapper.toResponse(permissao);
+        Permissao permissao = service.salvar(mapper.toDomain(request));
+        return mapper.toModel(permissao);
     }
 
     @Override
@@ -53,9 +53,9 @@ public class PermissaoController implements PermissaoControllerOpenApi {
     public PermissaoResponse atualizar(@PathVariable Long permissaoId,
                                        @Valid @RequestBody PermissaoRequest request) {
         Permissao permissaoSalva = service.buscarOuFalhar(permissaoId);
-        permissaoSalva = mapper.toModelCopy(permissaoSalva, request);
+        permissaoSalva = mapper.toDomainCopy(permissaoSalva, request);
         permissaoSalva = service.salvar(permissaoSalva);
-        return mapper.toResponse(permissaoSalva);
+        return mapper.toModel(permissaoSalva);
     }
 
     @Override

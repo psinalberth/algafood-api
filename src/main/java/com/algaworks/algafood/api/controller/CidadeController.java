@@ -9,15 +9,15 @@ import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Cidade;
 import com.algaworks.algafood.domain.service.CidadeService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/cidades", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -25,25 +25,26 @@ public class CidadeController implements CidadeControllerOpenApi {
 
     final CidadeService service;
     final CidadeMapper mapper;
+    final PagedResourcesAssembler<Cidade> pagedResourcesAssembler;
 
-    public CidadeController(CidadeService service, CidadeMapper mapper) {
+    public CidadeController(CidadeService service, CidadeMapper mapper, PagedResourcesAssembler<Cidade> pagedResourcesAssembler) {
         this.service = service;
         this.mapper = mapper;
+        this.pagedResourcesAssembler = pagedResourcesAssembler;
     }
 
     @Override
     @GetMapping
-    public Page<CidadeResponse> listar(@PageableDefault(size = 20) Pageable pageable) {
+    public PagedModel<CidadeResponse> listar(@PageableDefault(size = 20) Pageable pageable) {
         Page<Cidade> cidadesPage = service.listar(pageable);
-        List<CidadeResponse> cidades = mapper.toCollectionResponse(cidadesPage.getContent());
-        return new PageImpl<>(cidades, pageable, cidadesPage.getTotalElements());
+        return pagedResourcesAssembler.toModel(cidadesPage, mapper);
     }
 
     @Override
     @GetMapping("/{cidadeId}")
     public CidadeResponse buscar(@PathVariable Long cidadeId) {
         Cidade cidade = service.buscarOuFalhar(cidadeId);
-        return mapper.toResponse(cidade);
+        return mapper.toModel(cidade);
     }
 
     @Override
@@ -51,8 +52,8 @@ public class CidadeController implements CidadeControllerOpenApi {
     @ResponseStatus(HttpStatus.CREATED)
     public CidadeResponse salvar(@Valid @RequestBody CidadeRequest request) {
         try {
-            Cidade cidade = service.salvar(mapper.toModel(request));
-            return mapper.toResponse(cidade);
+            Cidade cidade = service.salvar(mapper.toDomain(request));
+            return mapper.toModel(cidade);
         } catch (EstadoNaoEncontradoException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }
@@ -64,9 +65,9 @@ public class CidadeController implements CidadeControllerOpenApi {
                                                     @Valid @RequestBody CidadeRequest request) {
         try {
             Cidade cidadeSalva = service.buscarOuFalhar(cidadeId);
-            cidadeSalva = mapper.toModelCopy(cidadeSalva, request);
+            cidadeSalva = mapper.toDomainCopy(cidadeSalva, request);
             cidadeSalva = service.salvar(cidadeSalva);
-            return mapper.toResponse(cidadeSalva);
+            return mapper.toModel(cidadeSalva);
         } catch (EstadoNaoEncontradoException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }

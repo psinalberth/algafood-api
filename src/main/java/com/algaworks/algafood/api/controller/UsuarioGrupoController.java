@@ -29,7 +29,7 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
     @GetMapping
     public List<GrupoResponse> listar(@PathVariable Long usuarioId) {
         Usuario usuario = usuarioService.buscarOuFalhar(usuarioId);
-        return grupoMapper.toCollectionResponse(usuario.getGrupos());
+        return grupoMapper.toCollectionModel(usuario.getGrupos());
     }
 
     @Override

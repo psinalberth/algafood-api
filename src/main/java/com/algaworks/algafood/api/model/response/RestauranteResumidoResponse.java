@@ -5,12 +5,15 @@ import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.math.BigDecimal;
 
+@Relation(collectionRelation = "restaurantes")
 @Getter
 @Setter
-public class RestauranteResumidoResponse {
+public class RestauranteResumidoResponse extends RepresentationModel<RestauranteResumidoResponse> {
 
     @JsonView(RestauranteView.ApenasNome.class)
     @ApiModelProperty(example = "1")

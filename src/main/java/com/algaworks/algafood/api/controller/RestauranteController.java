@@ -48,7 +48,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
     @GetMapping("/{restauranteId}")
     public RestauranteResponse buscar(@PathVariable Long restauranteId) {
         Restaurante restaurante = service.buscarOuFalhar(restauranteId);
-        return mapper.toResponse(restaurante);
+        return mapper.toModel(restaurante);
     }
 
     @Override
@@ -56,8 +56,8 @@ public class RestauranteController implements RestauranteControllerOpenApi {
     @ResponseStatus(HttpStatus.CREATED)
     public RestauranteResponse salvar(@Valid @RequestBody RestauranteRequest request) {
         try {
-            Restaurante restaurante = service.salvar(mapper.toModel(request));
-            return mapper.toResponse(restaurante);
+            Restaurante restaurante = service.salvar(mapper.toDomain(request));
+            return mapper.toModel(restaurante);
         } catch (EntidadeNaoEncontradaException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }
@@ -69,9 +69,9 @@ public class RestauranteController implements RestauranteControllerOpenApi {
                                          @Valid @RequestBody RestauranteRequest request) {
         try {
             Restaurante restauranteSalvo = service.buscarOuFalhar(restauranteId);
-            restauranteSalvo = mapper.toModelCopy(restauranteSalvo, request);
+            restauranteSalvo = mapper.toDomainCopy(restauranteSalvo, request);
             restauranteSalvo = service.salvar(restauranteSalvo);
-            return mapper.toResponse(restauranteSalvo);
+            return mapper.toModel(restauranteSalvo);
         } catch (EntidadeNaoEncontradaException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }

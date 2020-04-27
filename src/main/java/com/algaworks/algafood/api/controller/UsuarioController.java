@@ -8,6 +8,7 @@ import com.algaworks.algafood.api.model.response.UsuarioResponse;
 import com.algaworks.algafood.api.openapi.controller.UsuarioControllerOpenApi;
 import com.algaworks.algafood.domain.model.Usuario;
 import com.algaworks.algafood.domain.service.UsuarioService;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -29,24 +30,24 @@ public class UsuarioController implements UsuarioControllerOpenApi {
 
     @Override
     @GetMapping
-    public List<UsuarioResponse> listar() {
+    public CollectionModel<UsuarioResponse> listar() {
         List<Usuario> usuarios = service.listar();
-        return mapper.toCollectionResponse(usuarios);
+        return mapper.toCollectionModel(usuarios);
     }
 
     @Override
     @GetMapping("/{usuarioId}")
     public UsuarioResponse buscar(@PathVariable Long usuarioId) {
         Usuario usuario = service.buscarOuFalhar(usuarioId);
-        return mapper.toResponse(usuario);
+        return mapper.toModel(usuario);
     }
 
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UsuarioResponse salvar(@Valid @RequestBody UsuarioSenhaRequest request) {
-        Usuario usuario = service.salvar(mapper.toModel(request));
-        return mapper.toResponse(usuario);
+        Usuario usuario = service.salvar(mapper.toDomain(request));
+        return mapper.toModel(usuario);
     }
 
     @Override
@@ -54,9 +55,9 @@ public class UsuarioController implements UsuarioControllerOpenApi {
     public UsuarioResponse atualizar(@PathVariable Long usuarioId,
                                      @Valid @RequestBody UsuarioRequest request) {
         Usuario usuario = service.buscarOuFalhar(usuarioId);
-        usuario = mapper.toModelCopy(usuario, request);
+        usuario = mapper.toDomainCopy(usuario, request);
         usuario = service.salvar(usuario);
-        return mapper.toResponse(usuario);
+        return mapper.toModel(usuario);
     }
 
     @Override

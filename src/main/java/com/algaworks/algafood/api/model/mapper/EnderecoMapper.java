@@ -10,10 +10,10 @@ import org.mapstruct.*;
 })
 public interface EnderecoMapper {
 
-    Endereco toModel(EnderecoRequest request);
+    Endereco toDomain(EnderecoRequest request);
 
-    @InheritConfiguration(name = "toModel")
-    Endereco toModelCopy(@MappingTarget Endereco endereco, EnderecoRequest request);
+    @InheritConfiguration(name = "toDomain")
+    Endereco toDomainCopy(@MappingTarget Endereco endereco, EnderecoRequest request);
 
-    EnderecoResponse toResponse(Endereco endereco);
+    EnderecoResponse toModel(Endereco endereco);
 }

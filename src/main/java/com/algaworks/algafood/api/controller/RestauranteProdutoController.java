@@ -36,14 +36,14 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
                                         @RequestParam(required = false) boolean incluirInativos) {
         Restaurante restaurante = restauranteService.buscarOuFalhar(restauranteId);
         List<Produto> produtos = produtoService.listarTodos(restaurante, incluirInativos);
-        return produtoMapper.toCollectionResponse(produtos);
+        return produtoMapper.toCollectionModel(produtos);
     }
 
     @Override
     @GetMapping("/{produtoId}")
     public ProdutoResponse buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
         Produto produto = produtoService.buscarOuFalhar(restauranteId, produtoId);
-        return produtoMapper.toResponse(produto);
+        return produtoMapper.toModel(produto);
     }
 
     @Override
@@ -51,8 +51,8 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
     @ResponseStatus(HttpStatus.CREATED)
     public ProdutoResponse salvar(@PathVariable Long restauranteId,
                                   @Valid @RequestBody ProdutoRequest request) {
-        Produto produto = produtoService.salvar(produtoMapper.toModel(restauranteId, request));
-        return produtoMapper.toResponse(produto);
+        Produto produto = produtoService.salvar(produtoMapper.toDomain(restauranteId, request));
+        return produtoMapper.toModel(produto);
     }
 
     @Override
@@ -61,9 +61,9 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
                                      @PathVariable Long produtoId,
                                      @Valid @RequestBody ProdutoRequest request) {
         Produto produtoSalvo = produtoService.buscarOuFalhar(restauranteId, produtoId);
-        produtoSalvo = produtoMapper.toModellCopy(produtoSalvo, request);
+        produtoSalvo = produtoMapper.toDomainCopy(produtoSalvo, request);
         produtoSalvo = produtoService.salvar(produtoSalvo);
-        return produtoMapper.toResponse(produtoSalvo);
+        return produtoMapper.toModel(produtoSalvo);
     }
 
     @Override

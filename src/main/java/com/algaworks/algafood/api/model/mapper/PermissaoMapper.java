@@ -12,11 +12,11 @@ import java.util.List;
 @Mapper
 public interface PermissaoMapper {
 
-    Permissao toModel(PermissaoRequest request);
+    Permissao toDomain(PermissaoRequest request);
 
-    Permissao toModelCopy(@MappingTarget Permissao permissao, PermissaoRequest request);
+    Permissao toDomainCopy(@MappingTarget Permissao permissao, PermissaoRequest request);
 
-    PermissaoResponse toResponse(Permissao permissao);
+    PermissaoResponse toModel(Permissao permissao);
 
-    List<PermissaoResponse> toCollectionResponse(Collection<Permissao> permissoes);
+    List<PermissaoResponse> toCollectionModel(Collection<Permissao> permissoes);
 }

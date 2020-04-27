@@ -51,7 +51,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
         List<FormaPagamento> formasPagamento = service.listar();
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
-                .body(mapper.toCollectionResponse(formasPagamento));
+                .body(mapper.toCollectionModel(formasPagamento));
     }
 
     @Override
@@ -71,15 +71,15 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
         FormaPagamento formaPagamento = service.buscarOuFalhar(formaPagamentoId);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
-                .body(mapper.toResponse(formaPagamento));
+                .body(mapper.toModel(formaPagamento));
     }
 
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public FormaPagamentoResponse salvar(@Valid @RequestBody FormaPagamentoRequest request) {
-        FormaPagamento formaPagamento = service.salvar(mapper.toModel(request));
-        return mapper.toResponse(formaPagamento);
+        FormaPagamento formaPagamento = service.salvar(mapper.toDomain(request));
+        return mapper.toModel(formaPagamento);
     }
 
     @Override
@@ -87,9 +87,9 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
     public FormaPagamentoResponse atualizar(@PathVariable Long formaPagamentoId,
                                             @Valid @RequestBody FormaPagamentoRequest request) {
         FormaPagamento formaPagamentoSalva = service.buscarOuFalhar(formaPagamentoId);
-        formaPagamentoSalva = mapper.toModelCopy(formaPagamentoSalva, request);
+        formaPagamentoSalva = mapper.toDomainCopy(formaPagamentoSalva, request);
         formaPagamentoSalva = service.salvar(formaPagamentoSalva);
-        return mapper.toResponse(formaPagamentoSalva);
+        return mapper.toModel(formaPagamentoSalva);
     }
 
     @Override

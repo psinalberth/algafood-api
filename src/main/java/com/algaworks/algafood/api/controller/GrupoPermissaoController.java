@@ -29,7 +29,7 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
     @GetMapping
     public List<PermissaoResponse> listar(@PathVariable Long grupoId) {
         Grupo grupo = grupoService.buscarOuFalhar(grupoId);
-        return permissaoMapper.toCollectionResponse(grupo.getPermissoes());
+        return permissaoMapper.toCollectionModel(grupo.getPermissoes());
     }
 
     @Override

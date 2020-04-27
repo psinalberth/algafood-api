@@ -15,7 +15,7 @@ public interface FotoProdutoMapper {
             @Mapping(target = "tamanho", source = "arquivo.size"),
             @Mapping(target = "nomeArquivo", source = "arquivo.originalFilename")
     })
-    FotoProduto toModel(FotoProdutoRequest request);
+    FotoProduto toDomain(FotoProdutoRequest request);
 
-    FotoProdutoResponse toResponse(FotoProduto fotoProduto);
+    FotoProdutoResponse toModel(FotoProduto fotoProduto);
 }

@@ -4,14 +4,14 @@ import com.algaworks.algafood.api.exceptionhandler.ApiProblem;
 import com.algaworks.algafood.api.model.request.CidadeRequest;
 import com.algaworks.algafood.api.model.response.CidadeResponse;
 import io.swagger.annotations.*;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedModel;
 
 @Api(tags = "Cidades")
 public interface CidadeControllerOpenApi {
 
     @ApiOperation("Lista as cidades com paginação")
-    Page<CidadeResponse> listar(Pageable pageable);
+    PagedModel<CidadeResponse> listar(Pageable pageable);
 
     @ApiOperation("Busca uma cidade por ID")
     @ApiResponses({

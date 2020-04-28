@@ -1,6 +1,7 @@
 package com.algaworks.algafood.api.controller;
 
 import com.algaworks.algafood.api.model.mapper.RestauranteMapper;
+import com.algaworks.algafood.api.model.mapper.RestauranteResumidoMapper;
 import com.algaworks.algafood.api.model.request.RestauranteRequest;
 import com.algaworks.algafood.api.model.response.RestauranteResponse;
 import com.algaworks.algafood.api.model.response.RestauranteResumidoResponse;
@@ -11,6 +12,7 @@ import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.service.RestauranteService;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -23,24 +25,27 @@ import java.util.List;
 public class RestauranteController implements RestauranteControllerOpenApi {
 
     final RestauranteService service;
-    final RestauranteMapper mapper;
+    final RestauranteMapper restauranteMapper;
+    final RestauranteResumidoMapper restauranteResumidoMapper;
 
-    public RestauranteController(RestauranteService service, RestauranteMapper mapper) {
+    public RestauranteController(RestauranteService service, RestauranteMapper restauranteMapper,
+                                 RestauranteResumidoMapper restauranteResumidoMapper) {
         this.service = service;
-        this.mapper = mapper;
+        this.restauranteMapper = restauranteMapper;
+        this.restauranteResumidoMapper = restauranteResumidoMapper;
     }
 
     @Override
     @GetMapping
-    public List<RestauranteResumidoResponse> listar() {
+    public CollectionModel<RestauranteResumidoResponse> listar() {
         List<Restaurante> restaurantes = service.listar();
-        return mapper.toFilteredCollectionResponse(restaurantes);
+        return restauranteResumidoMapper.toCollectionModel(restaurantes);
     }
 
     @Override
     @JsonView(RestauranteView.ApenasNome.class)
     @GetMapping(params = "projecao=apenas-nome")
-    public List<RestauranteResumidoResponse> listarSomenteNomes() {
+    public CollectionModel<RestauranteResumidoResponse> listarSomenteNomes() {
         return listar();
     }
 
@@ -48,7 +53,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
     @GetMapping("/{restauranteId}")
     public RestauranteResponse buscar(@PathVariable Long restauranteId) {
         Restaurante restaurante = service.buscarOuFalhar(restauranteId);
-        return mapper.toModel(restaurante);
+        return restauranteMapper.toModel(restaurante);
     }
 
     @Override
@@ -56,8 +61,8 @@ public class RestauranteController implements RestauranteControllerOpenApi {
     @ResponseStatus(HttpStatus.CREATED)
     public RestauranteResponse salvar(@Valid @RequestBody RestauranteRequest request) {
         try {
-            Restaurante restaurante = service.salvar(mapper.toDomain(request));
-            return mapper.toModel(restaurante);
+            Restaurante restaurante = service.salvar(restauranteMapper.toDomain(request));
+            return restauranteMapper.toModel(restaurante);
         } catch (EntidadeNaoEncontradaException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }
@@ -69,9 +74,9 @@ public class RestauranteController implements RestauranteControllerOpenApi {
                                          @Valid @RequestBody RestauranteRequest request) {
         try {
             Restaurante restauranteSalvo = service.buscarOuFalhar(restauranteId);
-            restauranteSalvo = mapper.toDomainCopy(restauranteSalvo, request);
+            restauranteSalvo = restauranteMapper.toDomainCopy(restauranteSalvo, request);
             restauranteSalvo = service.salvar(restauranteSalvo);
-            return mapper.toModel(restauranteSalvo);
+            return restauranteMapper.toModel(restauranteSalvo);
         } catch (EntidadeNaoEncontradaException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }

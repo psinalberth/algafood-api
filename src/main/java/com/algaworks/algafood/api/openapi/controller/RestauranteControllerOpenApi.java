@@ -5,8 +5,7 @@ import com.algaworks.algafood.api.model.request.RestauranteRequest;
 import com.algaworks.algafood.api.model.response.RestauranteResponse;
 import com.algaworks.algafood.api.model.response.RestauranteResumidoResponse;
 import io.swagger.annotations.*;
-
-import java.util.List;
+import org.springframework.hateoas.CollectionModel;
 
 @Api(tags = "Restaurantes")
 public interface RestauranteControllerOpenApi {
@@ -17,10 +16,10 @@ public interface RestauranteControllerOpenApi {
                               name = "projecao", paramType = "query", type = "string",
                               allowableValues = "apenas-nome")
     })
-    List<RestauranteResumidoResponse> listar();
+    CollectionModel<RestauranteResumidoResponse> listar();
     
     @ApiOperation(value = "Lista restaurantes", hidden = true)
-    List<RestauranteResumidoResponse> listarSomenteNomes();
+    CollectionModel<RestauranteResumidoResponse> listarSomenteNomes();
 
     @ApiOperation("Busca um restaurante por ID")
     @ApiResponses({

@@ -80,6 +80,18 @@ public class Pedido extends EntidadeBase {
         this.status = status;
     }
 
+    public boolean podeSerConfirmado() {
+        return getStatus().isNovoStatusPermitido(StatusPedido.CONFIRMADO);
+    }
+
+    public boolean podeSerEntregue() {
+        return getStatus().isNovoStatusPermitido(StatusPedido.ENTREGUE);
+    }
+
+    public boolean podeSerCancelado() {
+        return getStatus().isNovoStatusPermitido(StatusPedido.CANCELADO);
+    }
+
     public void calcularValorTotal() {
         this.getItens().forEach(ItemPedido::calcularPrecoTotal);
         this.subtotal = this.getItens().stream()

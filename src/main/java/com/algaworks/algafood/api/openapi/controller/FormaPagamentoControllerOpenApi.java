@@ -4,16 +4,15 @@ import com.algaworks.algafood.api.exceptionhandler.ApiProblem;
 import com.algaworks.algafood.api.model.request.FormaPagamentoRequest;
 import com.algaworks.algafood.api.model.response.FormaPagamentoResponse;
 import io.swagger.annotations.*;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.ServletWebRequest;
-
-import java.util.List;
 
 @Api(tags = "Formas de Pagamento")
 public interface FormaPagamentoControllerOpenApi {
 
     @ApiOperation("Lista as formas de pagamento")
-    ResponseEntity<List<FormaPagamentoResponse>> listar(ServletWebRequest request);
+    ResponseEntity<CollectionModel<FormaPagamentoResponse>> listar(ServletWebRequest request);
 
     @ApiOperation("Busca uma forma de pagamento por ID")
     @ApiResponses({

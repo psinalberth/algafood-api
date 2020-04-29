@@ -6,6 +6,7 @@ import com.algaworks.algafood.api.model.response.PermissaoResponse;
 import com.algaworks.algafood.api.openapi.controller.PermissaoControllerOpenApi;
 import com.algaworks.algafood.domain.model.Permissao;
 import com.algaworks.algafood.domain.service.PermissaoService;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -28,7 +29,7 @@ public class PermissaoController implements PermissaoControllerOpenApi {
 
     @Override
     @GetMapping
-    public List<PermissaoResponse> listar() {
+    public CollectionModel<PermissaoResponse> listar() {
         List<Permissao> permissoes = service.listar();
         return mapper.toCollectionModel(permissoes);
     }

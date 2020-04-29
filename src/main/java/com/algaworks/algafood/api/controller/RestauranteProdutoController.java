@@ -8,12 +8,16 @@ import com.algaworks.algafood.domain.model.Produto;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.service.ProdutoService;
 import com.algaworks.algafood.domain.service.RestauranteService;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(path = "/restaurantes/{restauranteId}/produtos", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -32,11 +36,13 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 
     @Override
     @GetMapping
-    public List<ProdutoResponse> listar(@PathVariable Long restauranteId,
-                                        @RequestParam(required = false) boolean incluirInativos) {
+    public CollectionModel<ProdutoResponse> listar(@PathVariable Long restauranteId,
+                                                   @RequestParam(required = false) Boolean incluirInativos) {
         Restaurante restaurante = restauranteService.buscarOuFalhar(restauranteId);
         List<Produto> produtos = produtoService.listarTodos(restaurante, incluirInativos);
-        return produtoMapper.toCollectionModel(produtos);
+        return produtoMapper.toCollectionModel(produtos)
+                .add(linkTo(methodOn(RestauranteProdutoController.class)
+                        .listar(restauranteId, null)).withSelfRel());
     }
 
     @Override

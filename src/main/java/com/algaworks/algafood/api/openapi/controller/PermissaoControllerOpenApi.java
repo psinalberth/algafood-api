@@ -4,14 +4,13 @@ import com.algaworks.algafood.api.exceptionhandler.ApiProblem;
 import com.algaworks.algafood.api.model.request.PermissaoRequest;
 import com.algaworks.algafood.api.model.response.PermissaoResponse;
 import io.swagger.annotations.*;
-
-import java.util.List;
+import org.springframework.hateoas.CollectionModel;
 
 @Api(tags = "Permissões")
 public interface PermissaoControllerOpenApi {
 
     @ApiOperation("Lista as permissões")
-    List<PermissaoResponse> listar();
+    CollectionModel<PermissaoResponse> listar();
 
     @ApiOperation("Busca uma permissão por ID")
     @ApiResponses({

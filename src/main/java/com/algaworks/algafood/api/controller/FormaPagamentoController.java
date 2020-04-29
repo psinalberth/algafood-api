@@ -7,6 +7,7 @@ import com.algaworks.algafood.api.openapi.controller.FormaPagamentoControllerOpe
 import com.algaworks.algafood.domain.model.FormaPagamento;
 import com.algaworks.algafood.domain.repository.FormaPagamentoRepository;
 import com.algaworks.algafood.domain.service.FormaPagamentoService;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,7 +38,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 
     @Override
     @GetMapping
-    public ResponseEntity<List<FormaPagamentoResponse>> listar(ServletWebRequest request) {
+    public ResponseEntity<CollectionModel<FormaPagamentoResponse>> listar(ServletWebRequest request) {
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime dataUltimaAtualizacao = repository.getUltimaDataAtualizacao();

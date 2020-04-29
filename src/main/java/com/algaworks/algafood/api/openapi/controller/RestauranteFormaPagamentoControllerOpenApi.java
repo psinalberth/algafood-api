@@ -3,8 +3,8 @@ package com.algaworks.algafood.api.openapi.controller;
 import com.algaworks.algafood.api.exceptionhandler.ApiProblem;
 import com.algaworks.algafood.api.model.response.FormaPagamentoResponse;
 import io.swagger.annotations.*;
-
-import java.util.List;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.ResponseEntity;
 
 @Api(tags = "Restaurantes")
 public interface RestauranteFormaPagamentoControllerOpenApi {
@@ -13,7 +13,7 @@ public interface RestauranteFormaPagamentoControllerOpenApi {
     @ApiResponses({
             @ApiResponse(code = 404, message = "Restaurante não encontrado", response = ApiProblem.class)
     })
-    List<FormaPagamentoResponse> listar(
+    CollectionModel<FormaPagamentoResponse> listar(
             @ApiParam(value = "ID do restaurante", example = "1", required = true) Long restauranteId
     );
 
@@ -23,7 +23,7 @@ public interface RestauranteFormaPagamentoControllerOpenApi {
             @ApiResponse(code = 404, message = "Restaurante ou forma de pagamento não encontrado",
                          response = ApiProblem.class)
     })
-    void associar(
+    ResponseEntity<Void> associar(
             @ApiParam(value = "ID do restaurante", example = "1", required = true) Long restauranteId,
             @ApiParam(value = "ID da forma de pagamento", example = "1", required = true) Long formaPagamentoId
     );
@@ -34,7 +34,7 @@ public interface RestauranteFormaPagamentoControllerOpenApi {
             @ApiResponse(code = 404, message = "Restaurante ou forma de pagamento não encontrado",
                          response = ApiProblem.class)
     })
-    void desassociar(
+    ResponseEntity<Void> desassociar(
             @ApiParam(value = "ID do restaurante", example = "1", required = true) Long restauranteId,
             @ApiParam(value = "ID da forma de pagamento", example = "1", required = true) Long formaPagamentoId
     );

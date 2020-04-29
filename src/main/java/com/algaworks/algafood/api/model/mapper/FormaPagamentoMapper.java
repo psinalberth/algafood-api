@@ -11,8 +11,6 @@ import org.mapstruct.MappingTarget;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 
-import java.util.List;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -24,8 +22,6 @@ public interface FormaPagamentoMapper extends RepresentationModelAssembler<Forma
     FormaPagamento toDomain(FormaPagamentoIdRequest request);
 
     FormaPagamento toDomainCopy(@MappingTarget FormaPagamento formaPagamento, FormaPagamentoRequest request);
-
-    List<FormaPagamentoResponse> toCollectionModel(List<FormaPagamento> formasPagamento);
 
     @AfterMapping
     default void addLinks(@MappingTarget FormaPagamentoResponse formaPagamentoResponse) {

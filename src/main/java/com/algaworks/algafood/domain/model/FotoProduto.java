@@ -22,7 +22,7 @@ public class FotoProduto extends EntidadeBase {
     private Long tamanho;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     private Produto produto;
 
     public Long getRestauranteId() {

@@ -7,11 +7,14 @@ import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.exception.PermissaoNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Grupo;
 import com.algaworks.algafood.domain.service.GrupoService;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(path = "/grupos/{grupoId}/permissoes", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -27,17 +30,29 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
 
     @Override
     @GetMapping
-    public List<PermissaoResponse> listar(@PathVariable Long grupoId) {
+    public CollectionModel<PermissaoResponse> listar(@PathVariable Long grupoId) {
         Grupo grupo = grupoService.buscarOuFalhar(grupoId);
-        return permissaoMapper.toCollectionModel(grupo.getPermissoes());
+        CollectionModel<PermissaoResponse> permissoes = permissaoMapper.toCollectionModel(grupo.getPermissoes());
+
+        permissoes.getContent().forEach(permissao -> {
+            permissao.add(linkTo(methodOn(GrupoPermissaoController.class)
+                    .desassociar(grupoId, permissao.getId())).withRel("desassociar"));
+        });
+
+        return permissoes.removeLinks()
+                .add(linkTo(methodOn(GrupoPermissaoController.class)
+                        .listar(grupoId)).withSelfRel())
+                .add(linkTo(methodOn(GrupoPermissaoController.class)
+                        .associar(grupoId, null)).withRel("associar"));
     }
 
     @Override
     @PutMapping("/{permissaoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void associar(@PathVariable Long grupoId, @PathVariable Long permissaoId) {
+    public ResponseEntity<Void> associar(@PathVariable Long grupoId, @PathVariable Long permissaoId) {
         try {
             grupoService.associarPermissao(grupoId, permissaoId);
+            return ResponseEntity.noContent().build();
         } catch (PermissaoNaoEncontradaException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }
@@ -46,9 +61,10 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
     @Override
     @DeleteMapping("/{permissaoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void desassociar(@PathVariable Long grupoId, @PathVariable Long permissaoId) {
+    public ResponseEntity<Void> desassociar(@PathVariable Long grupoId, @PathVariable Long permissaoId) {
         try {
             grupoService.desassociarPermissao(grupoId, permissaoId);
+            return ResponseEntity.noContent().build();
         } catch (PermissaoNaoEncontradaException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }

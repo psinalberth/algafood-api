@@ -7,12 +7,14 @@ import com.algaworks.algafood.domain.exception.FormaPagamentoNaoEncontradaExcept
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.service.RestauranteService;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(path = "/restaurantes/{restauranteId}/formas-pagamento", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -29,17 +31,30 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
 
     @Override
     @GetMapping
-    public List<FormaPagamentoResponse> listar(@PathVariable Long restauranteId) {
+    public CollectionModel<FormaPagamentoResponse> listar(@PathVariable Long restauranteId) {
         Restaurante restaurante = restauranteService.buscarOuFalhar(restauranteId);
-        return formaPagamentoMapper.toCollectionModel(new ArrayList<>(restaurante.getFormasPagamento()));
+        CollectionModel<FormaPagamentoResponse> formasPagamentoResponse =
+                formaPagamentoMapper.toCollectionModel(restaurante.getFormasPagamento());
+
+        formasPagamentoResponse.getContent().forEach(formaPagamentoResponse -> {
+            formaPagamentoResponse.add(linkTo(methodOn(RestauranteFormaPagamentoController.class)
+                    .desassociar(restauranteId, formaPagamentoResponse.getId())).withRel("desassociar"));
+        });
+
+        return formasPagamentoResponse.removeLinks()
+                .add(linkTo(methodOn(RestauranteFormaPagamentoController.class)
+                        .listar(restauranteId)).withSelfRel())
+                .add(linkTo(methodOn(RestauranteFormaPagamentoController.class)
+                        .associar(restauranteId, null)).withRel("associar"));
     }
 
     @Override
     @PutMapping("/{formaPagamentoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void associar(@PathVariable Long restauranteId, @PathVariable Long formaPagamentoId) {
+    public ResponseEntity<Void> associar(@PathVariable Long restauranteId, @PathVariable Long formaPagamentoId) {
         try {
             restauranteService.associarFormaPagamento(restauranteId, formaPagamentoId);
+            return ResponseEntity.noContent().build();
         } catch (FormaPagamentoNaoEncontradaException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }
@@ -48,9 +63,10 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
     @Override
     @DeleteMapping("/{formaPagamentoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void desassociar(@PathVariable Long restauranteId, @PathVariable Long formaPagamentoId) {
+    public ResponseEntity<Void> desassociar(@PathVariable Long restauranteId, @PathVariable Long formaPagamentoId) {
         try {
             restauranteService.desassociarFormaPagamento(restauranteId, formaPagamentoId);
+            return ResponseEntity.noContent().build();
         } catch (FormaPagamentoNaoEncontradaException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }

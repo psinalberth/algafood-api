@@ -20,9 +20,10 @@ public class ProdutoService {
         this.restauranteService = restauranteService;
     }
 
-    public List<Produto> listarTodos(Restaurante restaurante, boolean incluirtInativos) {
-        if (incluirtInativos)
+    public List<Produto> listarTodos(Restaurante restaurante, Boolean incluirInativos) {
+        if (incluirInativos != null && incluirInativos)
             return repository.findAllByRestaurante(restaurante);
+
         return repository.findAllAtivosByRestaurante(restaurante);
     }
 

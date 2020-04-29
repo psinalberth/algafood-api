@@ -7,11 +7,14 @@ import com.algaworks.algafood.domain.exception.GrupoNaoEncontradoException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Usuario;
 import com.algaworks.algafood.domain.service.UsuarioService;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(path = "/usuarios/{usuarioId}/grupos", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -27,17 +30,30 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
 
     @Override
     @GetMapping
-    public List<GrupoResponse> listar(@PathVariable Long usuarioId) {
+    public CollectionModel<GrupoResponse> listar(@PathVariable Long usuarioId) {
         Usuario usuario = usuarioService.buscarOuFalhar(usuarioId);
-        return grupoMapper.toCollectionModel(usuario.getGrupos());
+
+        CollectionModel<GrupoResponse> gruposResponse = grupoMapper.toCollectionModel(usuario.getGrupos());
+
+        gruposResponse.getContent().forEach(grupoResponse -> {
+            grupoResponse.add(linkTo(methodOn(UsuarioGrupoController.class)
+                    .desassociar(usuarioId, grupoResponse.getId())).withRel("desassociar"));
+        });
+
+        return gruposResponse.removeLinks()
+                .add(linkTo(methodOn(UsuarioGrupoController.class)
+                        .listar(usuarioId)).withSelfRel())
+                .add(linkTo(methodOn(UsuarioGrupoController.class)
+                        .associar(usuarioId, null)).withRel("associar"));
     }
 
     @Override
     @PutMapping("/{grupoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void associar(@PathVariable Long usuarioId, @PathVariable Long grupoId) {
+    public ResponseEntity<Void> associar(@PathVariable Long usuarioId, @PathVariable Long grupoId) {
         try {
             usuarioService.associarGrupo(usuarioId, grupoId);
+            return ResponseEntity.noContent().build();
         } catch (GrupoNaoEncontradoException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }
@@ -46,9 +62,10 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
     @Override
     @DeleteMapping("/{grupoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void desassociar(@PathVariable Long usuarioId, @PathVariable Long grupoId) {
+    public ResponseEntity<Void> desassociar(@PathVariable Long usuarioId, @PathVariable Long grupoId) {
         try {
             usuarioService.desassociarGrupo(usuarioId, grupoId);
+            return ResponseEntity.noContent().build();
         } catch (GrupoNaoEncontradoException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }

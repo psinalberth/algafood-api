@@ -9,7 +9,7 @@ import com.algaworks.algafood.api.model.request.RestauranteRequest;
 import com.algaworks.algafood.api.model.response.RestauranteResponse;
 import com.algaworks.algafood.domain.model.Restaurante;
 import org.mapstruct.*;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.*;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 
 import java.util.List;
@@ -36,12 +36,19 @@ public interface RestauranteMapper extends RepresentationModelAssembler<Restaura
     List<RestauranteResponse> toCollectionModel(List<Restaurante> restaurantes);
 
     @AfterMapping
-    default void addLinks(@MappingTarget RestauranteResponse restauranteResponse) {
+    default void addLinks(@MappingTarget RestauranteResponse restauranteResponse, Restaurante restaurante) {
+        var urlRestaurantes = linkTo(methodOn(RestauranteController.class)
+                .listar()).toUri().toString();
+
+        var templateVariables = new TemplateVariables(
+                new TemplateVariable("projecao", TemplateVariable.VariableType.REQUEST_PARAM)
+        );
+
         restauranteResponse.add(linkTo(methodOn(RestauranteController.class)
                 .buscar(restauranteResponse.getId())).withSelfRel());
 
         restauranteResponse.add(linkTo(methodOn(RestauranteProdutoController.class)
-                .listar(restauranteResponse.getId(), true)).withRel("produtos"));
+                .listar(restauranteResponse.getId(), null)).withRel("produtos"));
 
         restauranteResponse.add(linkTo(methodOn(RestauranteFormaPagamentoController.class)
                 .listar(restauranteResponse.getId())).withRel("formasPagamento"));
@@ -49,8 +56,25 @@ public interface RestauranteMapper extends RepresentationModelAssembler<Restaura
         restauranteResponse.add(linkTo(methodOn(RestauranteUsuarioResponsavelController.class)
                 .listar(restauranteResponse.getId())).withRel("responsaveis"));
 
-        restauranteResponse.add(linkTo(methodOn(RestauranteController.class)
-                .listar()).withRel("restaurantes"));
+        if (!restaurante.isAtivo()) {
+            restauranteResponse.add(linkTo(methodOn(RestauranteController.class)
+                    .ativar(restauranteResponse.getId())).withRel("ativar"));
+        } else {
+            restauranteResponse.add(linkTo(methodOn(RestauranteController.class)
+                    .inativar(restauranteResponse.getId())).withRel("inativar"));
+        }
+
+        if (restaurante.isAberturaPermitida()) {
+            restauranteResponse.add(linkTo(methodOn(RestauranteController.class)
+                    .abrir(restauranteResponse.getId())).withRel("abrir"));
+        }
+
+        if (restaurante.isAberto()) {
+            restauranteResponse.add(linkTo(methodOn(RestauranteController.class)
+                    .fechar(restauranteResponse.getId())).withRel("fechar"));
+        }
+
+        restauranteResponse.add(new Link(UriTemplate.of(urlRestaurantes, templateVariables), "restaurantes"));
     }
 
     @Override

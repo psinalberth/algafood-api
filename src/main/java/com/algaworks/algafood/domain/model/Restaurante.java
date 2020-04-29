@@ -109,4 +109,8 @@ public class Restaurante extends EntidadeBase {
 
         return this.getResponsaveis().remove(responsavel);
     }
+
+    public boolean isAberturaPermitida() {
+        return isAtivo() && !isAberto();
+    }
 }

@@ -6,6 +6,7 @@ import com.algaworks.algafood.api.model.response.GrupoResponse;
 import com.algaworks.algafood.api.openapi.controller.GrupoControllerOpenApi;
 import com.algaworks.algafood.domain.model.Grupo;
 import com.algaworks.algafood.domain.service.GrupoService;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class GrupoController implements GrupoControllerOpenApi {
 
     @Override
     @GetMapping
-    public List<GrupoResponse> listar() {
+    public CollectionModel<GrupoResponse> listar() {
         List<Grupo> grupos = service.listar();
         return mapper.toCollectionModel(grupos);
     }

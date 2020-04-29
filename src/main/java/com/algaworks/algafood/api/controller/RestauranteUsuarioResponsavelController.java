@@ -10,6 +10,7 @@ import com.algaworks.algafood.domain.service.RestauranteService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -31,18 +32,28 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
     @GetMapping
     public CollectionModel<UsuarioResponse> listar(@PathVariable Long restauranteId) {
         Restaurante restaurante = restauranteService.buscarOuFalhar(restauranteId);
-        return usuarioMapper.toCollectionModel(restaurante.getResponsaveis())
-                .removeLinks()
-                .add(linkTo(methodOn(RestauranteUsuarioResponsavelController.class).listar(restauranteId))
-                        .withSelfRel());
+        CollectionModel<UsuarioResponse> usuariosResponse =
+                usuarioMapper.toCollectionModel(restaurante.getResponsaveis());
+
+        usuariosResponse.getContent().forEach(usuarioResponse -> {
+            usuarioResponse.add(linkTo(methodOn(RestauranteUsuarioResponsavelController.class)
+                    .desassociar(restauranteId, usuarioResponse.getId())).withRel("desassociar"));
+        });
+
+        return usuariosResponse.removeLinks()
+                .add(linkTo(methodOn(RestauranteUsuarioResponsavelController.class)
+                        .listar(restauranteId)).withSelfRel())
+                .add(linkTo(methodOn(RestauranteUsuarioResponsavelController.class)
+                        .associar(restauranteId, null)).withRel("associar"));
     }
 
     @Override
     @PutMapping("/{usuarioId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void associar(@PathVariable Long restauranteId, @PathVariable Long usuarioId) {
+    public ResponseEntity<Void> associar(@PathVariable Long restauranteId, @PathVariable Long usuarioId) {
         try {
             restauranteService.associarResponsavel(restauranteId, usuarioId);
+            return ResponseEntity.noContent().build();
         } catch (UsuarioNaoEncontradoException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }
@@ -51,9 +62,10 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
     @Override
     @DeleteMapping("/{usuarioId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void desassociar(@PathVariable Long restauranteId, @PathVariable Long usuarioId) {
+    public ResponseEntity<Void> desassociar(@PathVariable Long restauranteId, @PathVariable Long usuarioId) {
         try {
             restauranteService.desassociarResponsavel(restauranteId, usuarioId);
+            return ResponseEntity.noContent().build();
         } catch (UsuarioNaoEncontradoException ex) {
             throw new NegocioException(ex.getMessage(), ex);
         }

@@ -13,8 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.algaworks.algafood.api.AlgaLinks.*;
 
 @RestController
 @RequestMapping(path = "/grupos/{grupoId}/permissoes", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -35,15 +34,12 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
         CollectionModel<PermissaoResponse> permissoes = permissaoMapper.toCollectionModel(grupo.getPermissoes());
 
         permissoes.getContent().forEach(permissao -> {
-            permissao.add(linkTo(methodOn(GrupoPermissaoController.class)
-                    .desassociar(grupoId, permissao.getId())).withRel("desassociar"));
+            permissao.add(linkToGrupoPermissaoDesassociacao(grupoId, permissao.getId(), "desassociar"));
         });
 
         return permissoes.removeLinks()
-                .add(linkTo(methodOn(GrupoPermissaoController.class)
-                        .listar(grupoId)).withSelfRel())
-                .add(linkTo(methodOn(GrupoPermissaoController.class)
-                        .associar(grupoId, null)).withRel("associar"));
+                .add(linkToGrupoPermissoes(grupoId))
+                .add(linkToGrupoPermissaoAssociacao(grupoId, "associar"));
     }
 
     @Override

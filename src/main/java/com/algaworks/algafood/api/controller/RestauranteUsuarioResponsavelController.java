@@ -13,8 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.algaworks.algafood.api.AlgaLinks.*;
 
 @RestController
 @RequestMapping(path = "/restaurantes/{restauranteId}/responsaveis", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -35,16 +34,15 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
         CollectionModel<UsuarioResponse> usuariosResponse =
                 usuarioMapper.toCollectionModel(restaurante.getResponsaveis());
 
-        usuariosResponse.getContent().forEach(usuarioResponse -> {
-            usuarioResponse.add(linkTo(methodOn(RestauranteUsuarioResponsavelController.class)
-                    .desassociar(restauranteId, usuarioResponse.getId())).withRel("desassociar"));
+        usuariosResponse.getContent().forEach(usuario -> {
+            usuario.add(linkToRestauranteResponsavelDesassociacao(
+                    restauranteId, usuario.getId(), "desassociar")
+            );
         });
 
         return usuariosResponse.removeLinks()
-                .add(linkTo(methodOn(RestauranteUsuarioResponsavelController.class)
-                        .listar(restauranteId)).withSelfRel())
-                .add(linkTo(methodOn(RestauranteUsuarioResponsavelController.class)
-                        .associar(restauranteId, null)).withRel("associar"));
+                .add(linkToRestauranteResponsaveis(restauranteId))
+                .add(linkToRestauranteResponsavelAssociacao(restauranteId, "associar"));
     }
 
     @Override

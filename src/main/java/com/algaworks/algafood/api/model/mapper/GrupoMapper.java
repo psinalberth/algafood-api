@@ -1,6 +1,5 @@
 package com.algaworks.algafood.api.model.mapper;
 
-import com.algaworks.algafood.api.controller.GrupoController;
 import com.algaworks.algafood.api.model.request.GrupoRequest;
 import com.algaworks.algafood.api.model.response.GrupoResponse;
 import com.algaworks.algafood.domain.model.Grupo;
@@ -11,8 +10,8 @@ import org.mapstruct.MappingTarget;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.algaworks.algafood.api.AlgaLinks.linkToGrupo;
+import static com.algaworks.algafood.api.AlgaLinks.linkToGrupos;
 
 @Mapper
 public interface GrupoMapper extends RepresentationModelAssembler<Grupo, GrupoResponse> {
@@ -28,16 +27,13 @@ public interface GrupoMapper extends RepresentationModelAssembler<Grupo, GrupoRe
 
     @AfterMapping
     default void addLinks(@MappingTarget GrupoResponse grupoResponse) {
-        grupoResponse.add(linkTo(methodOn(GrupoController.class)
-                .buscar(grupoResponse.getId())).withSelfRel());
-
-        grupoResponse.add(linkTo(methodOn(GrupoController.class)
-                .listar()).withRel("grupos"));
+        grupoResponse.add(linkToGrupo(grupoResponse.getId()));
+        grupoResponse.add(linkToGrupos("grupos"));
     }
 
     @Override
     default CollectionModel<GrupoResponse> toCollectionModel(Iterable<? extends Grupo> entities) {
         return RepresentationModelAssembler.super.toCollectionModel(entities)
-                .add(linkTo(methodOn(GrupoController.class).listar()).withSelfRel());
+                .add(linkToGrupos());
     }
 }

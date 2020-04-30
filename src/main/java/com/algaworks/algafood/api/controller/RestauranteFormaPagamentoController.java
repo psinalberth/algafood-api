@@ -13,8 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.algaworks.algafood.api.AlgaLinks.*;
 
 @RestController
 @RequestMapping(path = "/restaurantes/{restauranteId}/formas-pagamento", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -36,16 +35,15 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
         CollectionModel<FormaPagamentoResponse> formasPagamentoResponse =
                 formaPagamentoMapper.toCollectionModel(restaurante.getFormasPagamento());
 
-        formasPagamentoResponse.getContent().forEach(formaPagamentoResponse -> {
-            formaPagamentoResponse.add(linkTo(methodOn(RestauranteFormaPagamentoController.class)
-                    .desassociar(restauranteId, formaPagamentoResponse.getId())).withRel("desassociar"));
+        formasPagamentoResponse.getContent().forEach(formaPagamento -> {
+            formaPagamento.add(linkToRestauranteFormaPagamentoDesassociacao(
+                    restauranteId, formaPagamento.getId(), "desassociar")
+            );
         });
 
         return formasPagamentoResponse.removeLinks()
-                .add(linkTo(methodOn(RestauranteFormaPagamentoController.class)
-                        .listar(restauranteId)).withSelfRel())
-                .add(linkTo(methodOn(RestauranteFormaPagamentoController.class)
-                        .associar(restauranteId, null)).withRel("associar"));
+                .add(linkToRestauranteFormasPagamento(restauranteId))
+                .add(linkToRestauranteFormaPagamentoAssociacao(restauranteId, "associar"));
     }
 
     @Override

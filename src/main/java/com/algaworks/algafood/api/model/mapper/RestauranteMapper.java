@@ -1,21 +1,16 @@
 package com.algaworks.algafood.api.model.mapper;
 
-import com.algaworks.algafood.api.controller.RestauranteController;
-import com.algaworks.algafood.api.controller.RestauranteFormaPagamentoController;
-import com.algaworks.algafood.api.controller.RestauranteProdutoController;
-import com.algaworks.algafood.api.controller.RestauranteUsuarioResponsavelController;
 import com.algaworks.algafood.api.model.request.RestauranteIdRequest;
 import com.algaworks.algafood.api.model.request.RestauranteRequest;
 import com.algaworks.algafood.api.model.response.RestauranteResponse;
 import com.algaworks.algafood.domain.model.Restaurante;
 import org.mapstruct.*;
-import org.springframework.hateoas.*;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 
 import java.util.List;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.algaworks.algafood.api.AlgaLinks.*;
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR, uses = {
         CozinhaMapper.class,
@@ -37,49 +32,31 @@ public interface RestauranteMapper extends RepresentationModelAssembler<Restaura
 
     @AfterMapping
     default void addLinks(@MappingTarget RestauranteResponse restauranteResponse, Restaurante restaurante) {
-        var urlRestaurantes = linkTo(methodOn(RestauranteController.class)
-                .listar()).toUri().toString();
-
-        var templateVariables = new TemplateVariables(
-                new TemplateVariable("projecao", TemplateVariable.VariableType.REQUEST_PARAM)
-        );
-
-        restauranteResponse.add(linkTo(methodOn(RestauranteController.class)
-                .buscar(restauranteResponse.getId())).withSelfRel());
-
-        restauranteResponse.add(linkTo(methodOn(RestauranteProdutoController.class)
-                .listar(restauranteResponse.getId(), null)).withRel("produtos"));
-
-        restauranteResponse.add(linkTo(methodOn(RestauranteFormaPagamentoController.class)
-                .listar(restauranteResponse.getId())).withRel("formasPagamento"));
-
-        restauranteResponse.add(linkTo(methodOn(RestauranteUsuarioResponsavelController.class)
-                .listar(restauranteResponse.getId())).withRel("responsaveis"));
+        restauranteResponse.add(linkToRestaurante(restaurante.getId()));
+        restauranteResponse.add(linkToProdutos(restaurante.getId(), "produtos"));
+        restauranteResponse.add(linkToRestauranteFormasPagamento(restaurante.getId(), "formasPagamento"));
+        restauranteResponse.add(linkToRestauranteResponsaveis(restaurante.getId(), "responsaveis"));
 
         if (!restaurante.isAtivo()) {
-            restauranteResponse.add(linkTo(methodOn(RestauranteController.class)
-                    .ativar(restauranteResponse.getId())).withRel("ativar"));
+            restauranteResponse.add(linkToRestauranteAtivacao(restaurante.getId(), "ativar"));
         } else {
-            restauranteResponse.add(linkTo(methodOn(RestauranteController.class)
-                    .inativar(restauranteResponse.getId())).withRel("inativar"));
+            restauranteResponse.add(linkToRestauranteInativacao(restaurante.getId(), "inativar"));
         }
 
         if (restaurante.isAberturaPermitida()) {
-            restauranteResponse.add(linkTo(methodOn(RestauranteController.class)
-                    .abrir(restauranteResponse.getId())).withRel("abrir"));
+            restauranteResponse.add(linkToRestauranteAbertura(restaurante.getId(), "abrir"));
         }
 
         if (restaurante.isAberto()) {
-            restauranteResponse.add(linkTo(methodOn(RestauranteController.class)
-                    .fechar(restauranteResponse.getId())).withRel("fechar"));
+            restauranteResponse.add(linkToRestauranteFechamento(restaurante.getId(), "fechar"));
         }
 
-        restauranteResponse.add(new Link(UriTemplate.of(urlRestaurantes, templateVariables), "restaurantes"));
+        restauranteResponse.add(linkToRestaurantes("restaurantes"));
     }
 
     @Override
     default CollectionModel<RestauranteResponse> toCollectionModel(Iterable<? extends Restaurante> entities) {
         return RepresentationModelAssembler.super.toCollectionModel(entities)
-                .add(linkTo(methodOn(RestauranteController.class).listar()).withSelfRel());
+                .add(linkToRestaurantes());
     }
 }

@@ -1,6 +1,5 @@
 package com.algaworks.algafood.api.model.mapper;
 
-import com.algaworks.algafood.api.controller.UsuarioController;
 import com.algaworks.algafood.api.model.request.UsuarioRequest;
 import com.algaworks.algafood.api.model.request.UsuarioSenhaRequest;
 import com.algaworks.algafood.api.model.response.UsuarioResponse;
@@ -11,11 +10,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
-import java.util.List;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static com.algaworks.algafood.api.AlgaLinks.linkToUsuario;
+import static com.algaworks.algafood.api.AlgaLinks.linkToUsuarios;
 
 @Mapper
 public interface UsuarioMapper extends RepresentationModelAssembler<Usuario, UsuarioResponse> {
@@ -30,17 +27,14 @@ public interface UsuarioMapper extends RepresentationModelAssembler<Usuario, Usu
     Usuario map(Long usuarioId);
 
     @AfterMapping
-    default void addLinks(@MappingTarget UsuarioResponse response) {
-        response.add(linkTo(methodOn(UsuarioController.class)
-                .buscar(response.getId())).withSelfRel());
-
-        response.add(linkTo(methodOn(UsuarioController.class)
-                .listar()).withRel("usuarios"));
+    default void addLinks(@MappingTarget UsuarioResponse usuarioResponse) {
+        usuarioResponse.add(linkToUsuario(usuarioResponse.getId()));
+        usuarioResponse.add(linkToUsuarios("usuarios"));
     }
 
     @Override
     default CollectionModel<UsuarioResponse> toCollectionModel(Iterable<? extends Usuario> entities) {
         return RepresentationModelAssembler.super.toCollectionModel(entities)
-                .add(linkTo(methodOn(UsuarioController.class).listar()).withSelfRel());
+                .add(linkToUsuarios());
     }
 }

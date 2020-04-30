@@ -1,6 +1,5 @@
 package com.algaworks.algafood.api.model.mapper;
 
-import com.algaworks.algafood.api.controller.EstadoController;
 import com.algaworks.algafood.api.model.request.EstadoIdRequest;
 import com.algaworks.algafood.api.model.request.EstadoRequest;
 import com.algaworks.algafood.api.model.response.EstadoResponse;
@@ -11,10 +10,8 @@ import org.mapstruct.MappingTarget;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 
-import java.util.List;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.algaworks.algafood.api.AlgaLinks.linkToEstado;
+import static com.algaworks.algafood.api.AlgaLinks.linkToEstados;
 
 @Mapper
 public interface EstadoMapper extends RepresentationModelAssembler<Estado, EstadoResponse> {
@@ -29,16 +26,13 @@ public interface EstadoMapper extends RepresentationModelAssembler<Estado, Estad
 
     @AfterMapping
     default void addLinks(@MappingTarget EstadoResponse estadoResponse) {
-        estadoResponse.add(linkTo(methodOn(EstadoController.class)
-                .buscar(estadoResponse.getId())).withSelfRel());
-
-        estadoResponse.add(linkTo(methodOn(EstadoController.class)
-                .listar()).withRel("estados"));
+        estadoResponse.add(linkToEstado(estadoResponse.getId()));
+        estadoResponse.add(linkToEstados("estados"));
     }
 
     @Override
     default CollectionModel<EstadoResponse> toCollectionModel(Iterable<? extends Estado> entities) {
         return RepresentationModelAssembler.super.toCollectionModel(entities)
-                .add(linkTo(methodOn(EstadoController.class).listar()).withSelfRel());
+                .add(linkToEstados());
     }
 }

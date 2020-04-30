@@ -1,15 +1,13 @@
 package com.algaworks.algafood.api.model.mapper;
 
-import com.algaworks.algafood.api.controller.RestauranteProdutoController;
-import com.algaworks.algafood.api.controller.RestauranteProdutoFotoController;
 import com.algaworks.algafood.api.model.request.FotoProdutoRequest;
 import com.algaworks.algafood.api.model.response.FotoProdutoResponse;
 import com.algaworks.algafood.domain.model.FotoProduto;
 import org.mapstruct.*;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.algaworks.algafood.api.AlgaLinks.linkToFotoProduto;
+import static com.algaworks.algafood.api.AlgaLinks.linkToProduto;
 
 @Mapper
 public interface FotoProdutoMapper extends RepresentationModelAssembler<FotoProduto, FotoProdutoResponse> {
@@ -23,11 +21,10 @@ public interface FotoProdutoMapper extends RepresentationModelAssembler<FotoProd
 
     @AfterMapping
     default void addLinks(@MappingTarget FotoProdutoResponse fotoResponse, FotoProduto fotoProduto) {
+        fotoResponse.add(
+                linkToFotoProduto(fotoProduto.getRestauranteId(), fotoProduto.getProduto().getId()));
 
-        fotoResponse.add(linkTo(methodOn(RestauranteProdutoFotoController.class)
-                .buscar(fotoProduto.getRestauranteId(), fotoProduto.getProduto().getId())).withSelfRel());
-
-        fotoResponse.add(linkTo(methodOn(RestauranteProdutoController.class)
-                .buscar(fotoProduto.getRestauranteId(), fotoProduto.getProduto().getId())).withRel("produto"));
+        fotoResponse.add(
+                linkToProduto(fotoProduto.getRestauranteId(), fotoProduto.getProduto().getId(), "produto"));
     }
 }

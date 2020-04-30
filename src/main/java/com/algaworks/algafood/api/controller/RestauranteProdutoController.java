@@ -16,8 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.algaworks.algafood.api.AlgaLinks.linkToProdutos;
 
 @RestController
 @RequestMapping(path = "/restaurantes/{restauranteId}/produtos", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -41,8 +40,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
         Restaurante restaurante = restauranteService.buscarOuFalhar(restauranteId);
         List<Produto> produtos = produtoService.listarTodos(restaurante, incluirInativos);
         return produtoMapper.toCollectionModel(produtos)
-                .add(linkTo(methodOn(RestauranteProdutoController.class)
-                        .listar(restauranteId, null)).withSelfRel());
+                .add(linkToProdutos(restauranteId));
     }
 
     @Override

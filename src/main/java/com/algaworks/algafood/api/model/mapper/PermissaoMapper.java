@@ -1,6 +1,5 @@
 package com.algaworks.algafood.api.model.mapper;
 
-import com.algaworks.algafood.api.controller.PermissaoController;
 import com.algaworks.algafood.api.model.request.PermissaoRequest;
 import com.algaworks.algafood.api.model.response.PermissaoResponse;
 import com.algaworks.algafood.domain.model.Permissao;
@@ -9,8 +8,7 @@ import org.mapstruct.MappingTarget;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.algaworks.algafood.api.AlgaLinks.linkToPermissoes;
 
 @Mapper
 public interface PermissaoMapper extends RepresentationModelAssembler<Permissao, PermissaoResponse> {
@@ -22,6 +20,6 @@ public interface PermissaoMapper extends RepresentationModelAssembler<Permissao,
     @Override
     default CollectionModel<PermissaoResponse> toCollectionModel(Iterable<? extends Permissao> entities) {
         return RepresentationModelAssembler.super.toCollectionModel(entities)
-                .add(linkTo(methodOn(PermissaoController.class).listar()).withSelfRel());
+                .add(linkToPermissoes());
     }
 }

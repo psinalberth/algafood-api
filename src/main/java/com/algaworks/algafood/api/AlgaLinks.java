@@ -48,7 +48,8 @@ public class AlgaLinks {
     }
 
     public static Link linkToCozinhas(String rel) {
-        return linkTo(CozinhaController.class).withRel(rel);
+        var urlCozinhas = linkTo(CozinhaController.class).toUri().toString();
+        return new Link(UriTemplate.of(urlCozinhas, PAGINACAO_VARIABLES), rel);
     }
 
     public static Link linkToCozinha(Long cozinhaId) {
@@ -329,5 +330,24 @@ public class AlgaLinks {
     public static Link linkToUsuarioGrupoDesassociacao(Long usuarioId, Long grupoId, String rel) {
         return linkTo(methodOn(UsuarioGrupoController.class)
                 .desassociar(usuarioId, grupoId)).withRel(rel);
+    }
+
+    // Estatísticas
+
+    public Link linkToEstatisticas(String rel) {
+        return linkTo(EstatisticasController.class).withRel(rel);
+    }
+
+    public Link linkToEstatisticasVendasDiarias(String rel) {
+        TemplateVariables filtroVariables = new TemplateVariables(
+                new TemplateVariable("restauranteId", VariableType.REQUEST_PARAM),
+                new TemplateVariable("dataCriacaoInicio", VariableType.REQUEST_PARAM),
+                new TemplateVariable("dataCriacaoFim", VariableType.REQUEST_PARAM),
+                new TemplateVariable("timeOffset", VariableType.REQUEST_PARAM));
+
+        String pedidosUrl = linkTo(methodOn(EstatisticasController.class)
+                .consultarVendasDiarias(null, null)).toUri().toString();
+
+        return new Link(UriTemplate.of(pedidosUrl, filtroVariables), rel);
     }
 }

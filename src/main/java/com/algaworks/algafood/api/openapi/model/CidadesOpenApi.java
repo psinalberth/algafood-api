@@ -11,11 +11,10 @@ import java.util.List;
 @ApiModel("CidadesResponse")
 @Getter
 @Setter
-public class PageCidadeResponseOpenApi {
+public class CidadesOpenApi {
 
-    private CidadesOpenApi.CidadeEmbeddedOpenApi _embedded;
+    private CidadeEmbeddedOpenApi _embedded;
     private Links _links;
-    private PageOpenApi page;
 
     @ApiModel("CidadesEmbeddedResponse")
     @Getter

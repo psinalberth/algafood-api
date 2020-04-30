@@ -11,8 +11,7 @@ import org.mapstruct.MappingTarget;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 
-import static com.algaworks.algafood.api.AlgaLinks.linkToUsuario;
-import static com.algaworks.algafood.api.AlgaLinks.linkToUsuarios;
+import static com.algaworks.algafood.api.AlgaLinks.*;
 
 @Mapper
 public interface UsuarioMapper extends RepresentationModelAssembler<Usuario, UsuarioResponse> {
@@ -30,6 +29,7 @@ public interface UsuarioMapper extends RepresentationModelAssembler<Usuario, Usu
     default void addLinks(@MappingTarget UsuarioResponse usuarioResponse) {
         usuarioResponse.add(linkToUsuario(usuarioResponse.getId()));
         usuarioResponse.add(linkToUsuarios("usuarios"));
+        usuarioResponse.add(linkToUsuarioGrupos(usuarioResponse.getId(), "grupos"));
     }
 
     @Override

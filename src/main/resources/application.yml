@@ -35,6 +35,8 @@ reports:
   jasper:
     path: /relatorios
 server:
+  compression:
+    enabled: true
   port: 8080
 algafood:
   email:

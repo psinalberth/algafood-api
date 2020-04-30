@@ -7,6 +7,7 @@ import com.algaworks.algafood.domain.model.Cozinha;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 
 import java.util.List;
@@ -29,5 +30,11 @@ public interface CozinhaMapper extends RepresentationModelAssembler<Cozinha, Coz
     default void addLinks(@MappingTarget CozinhaResponse cozinhaResponse) {
         cozinhaResponse.add(linkToCozinha(cozinhaResponse.getId()));
         cozinhaResponse.add(linkToCozinhas("cozinhas"));
+    }
+
+    @Override
+    default CollectionModel<CozinhaResponse> toCollectionModel(Iterable<? extends Cozinha> entities) {
+        return RepresentationModelAssembler.super.toCollectionModel(entities)
+                .add(linkToCozinhas());
     }
 }

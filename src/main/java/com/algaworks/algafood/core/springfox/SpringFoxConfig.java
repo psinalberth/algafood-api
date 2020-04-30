@@ -1,13 +1,8 @@
 package com.algaworks.algafood.core.springfox;
 
 import com.algaworks.algafood.api.exceptionhandler.ApiProblem;
-import com.algaworks.algafood.api.model.response.CidadeResponse;
-import com.algaworks.algafood.api.model.response.CozinhaResponse;
-import com.algaworks.algafood.api.model.response.PedidoResumidoResponse;
-import com.algaworks.algafood.api.openapi.model.PageCidadeResponseOpenApi;
-import com.algaworks.algafood.api.openapi.model.PageCozinhaResponseOpenApi;
-import com.algaworks.algafood.api.openapi.model.PagePedidoResumidoResponseOpenApi;
-import com.algaworks.algafood.api.openapi.model.PageableOpenApi;
+import com.algaworks.algafood.api.model.response.*;
+import com.algaworks.algafood.api.openapi.model.*;
 import com.fasterxml.classmate.TypeResolver;
 import com.google.common.base.Predicates;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +11,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Links;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -68,17 +66,46 @@ public class SpringFoxConfig implements WebMvcConfigurer {
                                        InputStream.class)
                 .additionalModels(typeResolver.resolve(ApiProblem.class))
                 .directModelSubstitute(Pageable.class, PageableOpenApi.class)
+                .directModelSubstitute(Links.class, LinksOpenApi.class)
                 .alternateTypeRules(AlternateTypeRules.newRule(
-                        typeResolver.resolve(Page.class, CidadeResponse.class),
+                        typeResolver.resolve(PagedModel.class, CidadeResponse.class),
                         PageCidadeResponseOpenApi.class
                 ))
                 .alternateTypeRules(AlternateTypeRules.newRule(
-                        typeResolver.resolve(Page.class, CozinhaResponse.class),
+                        typeResolver.resolve(PagedModel.class, CozinhaResponse.class),
                         PageCozinhaResponseOpenApi.class
                 ))
                 .alternateTypeRules(AlternateTypeRules.newRule(
-                        typeResolver.resolve(Page.class, PedidoResumidoResponse.class),
+                        typeResolver.resolve(PagedModel.class, PedidoResumidoResponse.class),
                         PagePedidoResumidoResponseOpenApi.class
+                ))
+                .alternateTypeRules(AlternateTypeRules.newRule(
+                        typeResolver.resolve(CollectionModel.class, EstadoResponse.class),
+                        EstadosOpenApi.class
+                ))
+                .alternateTypeRules(AlternateTypeRules.newRule(
+                        typeResolver.resolve(CollectionModel.class, FormaPagamentoResponse.class),
+                        FormasPagamentoOpenApi.class
+                ))
+                .alternateTypeRules(AlternateTypeRules.newRule(
+                        typeResolver.resolve(CollectionModel.class, GrupoResponse.class),
+                        GruposOpenApi.class
+                ))
+                .alternateTypeRules(AlternateTypeRules.newRule(
+                        typeResolver.resolve(CollectionModel.class, PermissaoResponse.class),
+                        PermissoesOpenApi.class
+                ))
+                .alternateTypeRules(AlternateTypeRules.newRule(
+                        typeResolver.resolve(CollectionModel.class, ProdutoResponse.class),
+                        ProdutosOpenApi.class
+                ))
+                .alternateTypeRules(AlternateTypeRules.newRule(
+                        typeResolver.resolve(CollectionModel.class, RestauranteResumidoResponse.class),
+                        RestaurantesOpenApi.class
+                ))
+                .alternateTypeRules(AlternateTypeRules.newRule(
+                        typeResolver.resolve(CollectionModel.class, UsuarioResponse.class),
+                        UsuariosOpenApi.class
                 ))
                 .tags(
                         new Tag("Cidades", "Gerencia as cidades"),

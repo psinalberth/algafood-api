@@ -10,8 +10,7 @@ import org.mapstruct.MappingTarget;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 
-import static com.algaworks.algafood.api.AlgaLinks.linkToGrupo;
-import static com.algaworks.algafood.api.AlgaLinks.linkToGrupos;
+import static com.algaworks.algafood.api.AlgaLinks.*;
 
 @Mapper
 public interface GrupoMapper extends RepresentationModelAssembler<Grupo, GrupoResponse> {
@@ -29,6 +28,7 @@ public interface GrupoMapper extends RepresentationModelAssembler<Grupo, GrupoRe
     default void addLinks(@MappingTarget GrupoResponse grupoResponse) {
         grupoResponse.add(linkToGrupo(grupoResponse.getId()));
         grupoResponse.add(linkToGrupos("grupos"));
+        grupoResponse.add(linkToGrupoPermissoes(grupoResponse.getId(), "permissoes"));
     }
 
     @Override

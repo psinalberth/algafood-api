@@ -5,6 +5,7 @@ import com.algaworks.algafood.domain.filter.VendaDiariaFilter;
 import com.algaworks.algafood.domain.model.dto.VendaDiaria;
 import com.algaworks.algafood.domain.service.VendaQueryService;
 import com.algaworks.algafood.infrastructure.service.report.JasperReportExporter;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static com.algaworks.algafood.api.AlgaLinks.linkToEstatisticasVendasDiarias;
 
 @RestController
 @RequestMapping(path = "/estatisticas", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -25,6 +28,15 @@ public class EstatisticasController implements EstatisticasControllerOpenApi {
     public EstatisticasController(VendaQueryService vendaService, JasperReportExporter reportExporter) {
         this.vendaService = vendaService;
         this.reportExporter = reportExporter;
+    }
+
+    @GetMapping
+    public EstatisticasModel estatisticas() {
+        var estatisticas = new EstatisticasModel();
+
+        estatisticas.add(linkToEstatisticasVendasDiarias("vendasDiarias"));
+
+        return estatisticas;
     }
 
     @Override
@@ -49,5 +61,9 @@ public class EstatisticasController implements EstatisticasControllerOpenApi {
                 .contentType(MediaType.APPLICATION_PDF)
                 .headers(httpHeaders)
                 .body(bytesRelatorio);
+    }
+
+    public static class EstatisticasModel extends RepresentationModel<EstatisticasModel> {
+
     }
 }

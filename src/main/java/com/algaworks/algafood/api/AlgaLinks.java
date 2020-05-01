@@ -1,14 +1,12 @@
 package com.algaworks.algafood.api;
 
 import com.algaworks.algafood.api.controller.*;
-import lombok.experimental.UtilityClass;
 import org.springframework.hateoas.*;
 import org.springframework.hateoas.TemplateVariable.VariableType;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-@UtilityClass
 public class AlgaLinks {
 
     public static final TemplateVariables PAGINACAO_VARIABLES = new TemplateVariables(
@@ -334,11 +332,11 @@ public class AlgaLinks {
 
     // Estatísticas
 
-    public Link linkToEstatisticas(String rel) {
+    public static Link linkToEstatisticas(String rel) {
         return linkTo(EstatisticasController.class).withRel(rel);
     }
 
-    public Link linkToEstatisticasVendasDiarias(String rel) {
+    public static Link linkToEstatisticasVendasDiarias(String rel) {
         TemplateVariables filtroVariables = new TemplateVariables(
                 new TemplateVariable("restauranteId", VariableType.REQUEST_PARAM),
                 new TemplateVariable("dataCriacaoInicio", VariableType.REQUEST_PARAM),

@@ -2,6 +2,7 @@ package com.algaworks.algafood.api.exceptionhandler;
 
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +25,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -128,6 +130,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 //
 //        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
 //    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleUncaughtException(Exception ex, WebRequest request) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        log.error(ex.getMessage(), ex);
+
+        ApiProblem problem = createApiProblem(status, MSG_ERRO_GENERICO, request, ApiProblemType.ERRO_DE_SISTEMA)
+                .build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
 
     private ResponseEntity<Object> handleValidationException(Exception ex, HttpHeaders headers, HttpStatus status,
                                                              WebRequest request,

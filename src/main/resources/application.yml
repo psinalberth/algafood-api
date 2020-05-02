@@ -44,6 +44,9 @@ algafood:
       recipient: test.algafood@gmail.com
     sender: Algafood <test.algafood@gmail.com>
     type: fake
+  logging:
+    loggly:
+      token:
   storage:
     local:
       directory: /catalogo

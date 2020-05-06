@@ -134,3 +134,19 @@ VALUES(1, '2020-04-11 00:03:25', '2020-04-11 00:03:25', '05d2b496-9751-4d4d-9875
 INSERT INTO item_pedido
 (id, data_atualizacao, data_criacao, observacao, preco_total, preco_unitario, quantidade, pedido_id, produto_id)
 VALUES(1, '2020-04-11 00:03:25', '2020-04-11 00:03:25', NULL, 116.00, 58.00, 2, 1, 1);
+
+-- Permissão
+
+INSERT INTO permissao (id, descricao, nome) VALUES(1, 'Permissão para alterar cozinhas', 'ALTERAR_COZINHAS');
+INSERT INTO permissao (id, descricao, nome) VALUES(2, 'Permissão para listar cozinhas', 'LISTAR_COZINHAS');
+
+-- Usuário e Grupo
+
+INSERT INTO usuario_grupo (usuario_id, grupo_id) values (1, 1), (1, 2);
+INSERT INTO usuario_grupo (usuario_id, grupo_id) values (2, 2);
+INSERT INTO usuario_grupo (usuario_id, grupo_id) values (3, 1), (3, 2);
+
+-- Grupo e Permissão
+
+INSERT INTO grupo_permissao (grupo_id, permissao_id) VALUES(1, 1), (1, 2);
+INSERT INTO grupo_permissao (grupo_id, permissao_id) VALUES(2, 2);

@@ -6,10 +6,12 @@ import com.algaworks.algafood.api.model.request.PedidoRequest;
 import com.algaworks.algafood.api.model.response.PedidoResponse;
 import com.algaworks.algafood.api.model.response.PedidoResumidoResponse;
 import com.algaworks.algafood.api.openapi.controller.CadastroPedidoControllerOpenApi;
+import com.algaworks.algafood.core.security.AlgafoodSecurity;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Pedido;
 import com.algaworks.algafood.domain.service.CadastroPedidoService;
+import com.algaworks.algafood.domain.service.UsuarioService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -29,12 +31,19 @@ public class CadastroPedidoController implements CadastroPedidoControllerOpenApi
     final PedidoMapper pedidoMapper;
     final PedidoResumidoMapper pedidoResumidoMapper;
     final PagedResourcesAssembler<Pedido> pagedResourcesAssembler;
+    final AlgafoodSecurity algafoodSecurity;
+    final UsuarioService usuarioService;
 
-    public CadastroPedidoController(CadastroPedidoService service, PedidoMapper pedidoMapper, PedidoResumidoMapper pedidoResumidoMapper, PagedResourcesAssembler<Pedido> pagedResourcesAssembler) {
+    public CadastroPedidoController(CadastroPedidoService service, PedidoMapper pedidoMapper,
+                                    PedidoResumidoMapper pedidoResumidoMapper,
+                                    PagedResourcesAssembler<Pedido> pagedResourcesAssembler,
+                                    AlgafoodSecurity algafoodSecurity, UsuarioService usuarioService) {
         this.service = service;
         this.pedidoMapper = pedidoMapper;
         this.pedidoResumidoMapper = pedidoResumidoMapper;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
+        this.algafoodSecurity = algafoodSecurity;
+        this.usuarioService = usuarioService;
     }
 
     @Override
@@ -56,7 +65,9 @@ public class CadastroPedidoController implements CadastroPedidoControllerOpenApi
     @ResponseStatus(HttpStatus.CREATED)
     public PedidoResponse salvar(@Valid @RequestBody PedidoRequest request) {
         try {
-            Pedido pedido = service.salvar(pedidoMapper.toDomain(request));
+            Pedido pedido = pedidoMapper.toDomain(request);
+            pedido.setCliente(usuarioService.buscarOuFalhar(algafoodSecurity.getUsuarioId()));
+            pedido = service.salvar(pedido);
             return pedidoMapper.toModel(pedido);
         } catch (EntidadeNaoEncontradaException ex) {
             throw new NegocioException(ex.getMessage(), ex);

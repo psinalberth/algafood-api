@@ -32,4 +32,8 @@ public class Usuario {
     public boolean removerGrupo(Grupo grupo) {
         return getGrupos().remove(grupo);
     }
+
+    public boolean isNovo() {
+        return getId() == null;
+    }
 }

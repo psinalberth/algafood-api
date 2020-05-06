@@ -31,6 +31,11 @@ spring:
     port: 587
     username: apikey
     password:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          public-key-location: classpath:keys/algafood-pkey.pem
 reports:
   jasper:
     path: /relatorios

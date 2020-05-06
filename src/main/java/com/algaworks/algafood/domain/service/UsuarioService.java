@@ -5,20 +5,24 @@ import com.algaworks.algafood.domain.exception.UsuarioNaoEncontradoException;
 import com.algaworks.algafood.domain.model.Grupo;
 import com.algaworks.algafood.domain.model.Usuario;
 import com.algaworks.algafood.domain.repository.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
 
     final UsuarioRepository repository;
     final GrupoService grupoService;
+    final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository repository, GrupoService grupoService) {
+    public UsuarioService(UsuarioRepository repository, GrupoService grupoService, PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.grupoService = grupoService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Usuario> listar() {
@@ -27,6 +31,19 @@ public class UsuarioService {
 
     @Transactional
     public Usuario salvar(Usuario usuario) {
+
+        Optional<Usuario> usuarioSalvo = repository.findByEmail(usuario.getEmail());
+
+        usuarioSalvo.ifPresent(u -> {
+            if (!u.equals(usuario))
+                throw new NegocioException(String.format("Já existe um usuário cadastrado com o e-mail %s",
+                        usuario.getEmail()));
+        });
+
+        if (usuario.isNovo()) {
+            usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+        }
+
         return repository.save(usuario);
     }
 
@@ -51,9 +68,9 @@ public class UsuarioService {
     @Transactional
     public void alterarSenha(Long usuarioId, String senhaAtual, String novaSenha) {
         Usuario usuario = buscarOuFalhar(usuarioId);
-        if (!usuario.getSenha().equals(senhaAtual)) {
+        if (!passwordEncoder.matches(senhaAtual, usuario.getSenha())) {
             throw new NegocioException("Senha atual informada incorreta para o usuário selecionado.");
         }
-        usuario.setSenha(novaSenha);
+        usuario.setSenha(passwordEncoder.encode(novaSenha));
     }
 }

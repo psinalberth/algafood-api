@@ -117,13 +117,13 @@ VALUES(2, utc_timestamp, utc_timestamp, 0, 'Filet de Peixe com Sauce de Leite de
 
 INSERT INTO usuario
 (id, data_cadastro, email, nome, senha)
-VALUES(1, NULL, 'augusto.jota@algafood.com', 'Augusto Jota', '123');
+VALUES(1, utc_timestamp, 'augusto.jota@algafood.com', 'Augusto Jota', '$2y$12$uHL.DZL6M3WMwULAofH5j.VuBQVZGcklxJ6CsaeVrooOYHrMTmnca');
 INSERT INTO usuario
 (id, data_cadastro, email, nome, senha)
-VALUES(2, NULL, 'arreis@pedidos.com.br', 'Alessandra Reis', 'lolhehehe');
+VALUES(2, utc_timestamp, 'arreis@pedidos.com.br', 'Alessandra Reis', '$2y$12$uHL.DZL6M3WMwULAofH5j.VuBQVZGcklxJ6CsaeVrooOYHrMTmnca');
 INSERT INTO usuario
 (id, data_cadastro, email, nome, senha)
-VALUES(3, NULL, 'test.algafood@gmail.com', 'Donnie Darko', '100senha');
+VALUES(3, utc_timestamp, 'test.algafood@gmail.com', 'Donnie Darko', '$2y$12$uHL.DZL6M3WMwULAofH5j.VuBQVZGcklxJ6CsaeVrooOYHrMTmnca');
 
 -- Pedido
 

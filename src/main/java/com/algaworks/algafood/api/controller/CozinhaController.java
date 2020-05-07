@@ -4,6 +4,7 @@ import com.algaworks.algafood.api.model.mapper.CozinhaMapper;
 import com.algaworks.algafood.api.model.request.CozinhaRequest;
 import com.algaworks.algafood.api.model.response.CozinhaResponse;
 import com.algaworks.algafood.api.openapi.controller.CozinhaControllerOpenApi;
+import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.service.CozinhaService;
 import org.springframework.data.domain.Page;
@@ -31,6 +32,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
         this.pagedResourcesAssembler = pagedResourcesAssembler;
     }
 
+    @SecurityConstants.Cozinhas.PodeConsultar
     @Override
     @GetMapping
     public PagedModel<CozinhaResponse> listar(@PageableDefault(size = 20) Pageable pageable) {
@@ -45,6 +47,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
         return mapper.toModel(cozinha);
     }
 
+    @SecurityConstants.Cozinhas.PodeEditar
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

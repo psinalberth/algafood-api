@@ -3,6 +3,7 @@ package com.algaworks.algafood.api.controller;
 import com.algaworks.algafood.api.model.mapper.PermissaoMapper;
 import com.algaworks.algafood.api.model.response.PermissaoResponse;
 import com.algaworks.algafood.api.openapi.controller.GrupoPermissaoControllerOpenApi;
+import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.exception.PermissaoNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Grupo;
@@ -27,6 +28,7 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
         this.permissaoMapper = permissaoMapper;
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeConsultar
     @Override
     @GetMapping
     public CollectionModel<PermissaoResponse> listar(@PathVariable Long grupoId) {
@@ -42,6 +44,7 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
                 .add(linkToGrupoPermissaoAssociacao(grupoId, "associar"));
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeEditar
     @Override
     @PutMapping("/{permissaoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -54,6 +57,7 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
         }
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeEditar
     @Override
     @DeleteMapping("/{permissaoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

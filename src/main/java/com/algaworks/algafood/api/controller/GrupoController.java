@@ -4,6 +4,7 @@ import com.algaworks.algafood.api.model.mapper.GrupoMapper;
 import com.algaworks.algafood.api.model.request.GrupoRequest;
 import com.algaworks.algafood.api.model.response.GrupoResponse;
 import com.algaworks.algafood.api.openapi.controller.GrupoControllerOpenApi;
+import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.model.Grupo;
 import com.algaworks.algafood.domain.service.GrupoService;
 import org.springframework.hateoas.CollectionModel;
@@ -26,6 +27,7 @@ public class GrupoController implements GrupoControllerOpenApi {
         this.mapper = mapper;
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeConsultar
     @Override
     @GetMapping
     public CollectionModel<GrupoResponse> listar() {
@@ -33,6 +35,7 @@ public class GrupoController implements GrupoControllerOpenApi {
         return mapper.toCollectionModel(grupos);
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeConsultar
     @Override
     @GetMapping("/{grupoId}")
     public GrupoResponse buscar(@PathVariable Long grupoId) {
@@ -40,6 +43,7 @@ public class GrupoController implements GrupoControllerOpenApi {
         return mapper.toModel(grupo);
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeEditar
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -48,6 +52,7 @@ public class GrupoController implements GrupoControllerOpenApi {
         return mapper.toModel(grupo);
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeEditar
     @Override
     @PutMapping("/{grupoId}")
     public GrupoResponse atualizar(@PathVariable Long grupoId,
@@ -58,6 +63,7 @@ public class GrupoController implements GrupoControllerOpenApi {
         return mapper.toModel(grupo);
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeEditar
     @Override
     @DeleteMapping("/{grupoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

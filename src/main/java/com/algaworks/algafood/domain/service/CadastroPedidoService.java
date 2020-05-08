@@ -1,8 +1,10 @@
 package com.algaworks.algafood.domain.service;
 
 import com.algaworks.algafood.domain.exception.PedidoNaoEncontradoException;
+import com.algaworks.algafood.domain.filter.PedidoFilter;
 import com.algaworks.algafood.domain.model.*;
 import com.algaworks.algafood.domain.repository.PedidoRepository;
+import com.algaworks.algafood.infrastructure.repository.spec.PedidoSpecs;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,10 @@ public class CadastroPedidoService {
 
     public Page<Pedido> listar(Pageable pageable) {
         return repository.findAll(pageable);
+    }
+
+    public Page<Pedido> listar(PedidoFilter filtro, Pageable pageable) {
+        return repository.findAll(PedidoSpecs.usandoFiltro(filtro), pageable);
     }
 
     @Transactional

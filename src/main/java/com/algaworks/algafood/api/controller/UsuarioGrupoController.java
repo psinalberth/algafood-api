@@ -4,6 +4,7 @@ import com.algaworks.algafood.api.AlgaLinks;
 import com.algaworks.algafood.api.model.mapper.GrupoMapper;
 import com.algaworks.algafood.api.model.response.GrupoResponse;
 import com.algaworks.algafood.api.openapi.controller.UsuarioGrupoControllerOpenApi;
+import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.exception.GrupoNaoEncontradoException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Usuario;
@@ -30,6 +31,7 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
         this.grupoMapper = grupoMapper;
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeConsultar
     @Override
     @GetMapping
     public CollectionModel<GrupoResponse> listar(@PathVariable Long usuarioId) {
@@ -46,6 +48,7 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
                 .add(linkToUsuarioGrupoAssociacao(usuarioId, "associar"));
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeEditar
     @Override
     @PutMapping("/{grupoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -58,6 +61,7 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
         }
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeEditar
     @Override
     @DeleteMapping("/{grupoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

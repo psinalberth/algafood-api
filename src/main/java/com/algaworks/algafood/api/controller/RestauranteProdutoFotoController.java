@@ -4,6 +4,7 @@ import com.algaworks.algafood.api.model.mapper.FotoProdutoMapper;
 import com.algaworks.algafood.api.model.request.FotoProdutoRequest;
 import com.algaworks.algafood.api.model.response.FotoProdutoResponse;
 import com.algaworks.algafood.api.openapi.controller.RestauranteProdutoFotoControllerOpenApi;
+import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.model.FotoProduto;
 import com.algaworks.algafood.domain.model.Produto;
@@ -41,6 +42,7 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
         this.mapper = mapper;
     }
 
+    @SecurityConstants.Restaurantes.PodeGerenciarFuncionamento
     @Override
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public FotoProdutoResponse atualizar(@PathVariable Long restauranteId, @PathVariable Long produtoId,
@@ -53,6 +55,7 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
         return mapper.toModel(fotoProduto);
     }
 
+    @SecurityConstants.Restaurantes.PodeConsultar
     @Override
     @GetMapping
     public FotoProdutoResponse buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
@@ -92,6 +95,7 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
         }
     }
 
+    @SecurityConstants.Restaurantes.PodeGerenciarFuncionamento
     @Override
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)

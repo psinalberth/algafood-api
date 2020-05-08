@@ -4,6 +4,7 @@ import com.algaworks.algafood.api.model.mapper.CidadeMapper;
 import com.algaworks.algafood.api.model.request.CidadeRequest;
 import com.algaworks.algafood.api.model.response.CidadeResponse;
 import com.algaworks.algafood.api.openapi.controller.CidadeControllerOpenApi;
+import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.exception.EstadoNaoEncontradoException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Cidade;
@@ -33,6 +34,7 @@ public class CidadeController implements CidadeControllerOpenApi {
         this.pagedResourcesAssembler = pagedResourcesAssembler;
     }
 
+    @SecurityConstants.Cidades.PodeConsultar
     @Override
     @GetMapping
     public PagedModel<CidadeResponse> listar(@PageableDefault(size = 20) Pageable pageable) {
@@ -40,6 +42,7 @@ public class CidadeController implements CidadeControllerOpenApi {
         return pagedResourcesAssembler.toModel(cidadesPage, mapper);
     }
 
+    @SecurityConstants.Cidades.PodeConsultar
     @Override
     @GetMapping("/{cidadeId}")
     public CidadeResponse buscar(@PathVariable Long cidadeId) {
@@ -47,6 +50,7 @@ public class CidadeController implements CidadeControllerOpenApi {
         return mapper.toModel(cidade);
     }
 
+    @SecurityConstants.Cidades.PodeEditar
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -59,6 +63,7 @@ public class CidadeController implements CidadeControllerOpenApi {
         }
     }
 
+    @SecurityConstants.Cidades.PodeEditar
     @Override
     @PutMapping("/{cidadeId}")
     public CidadeResponse atualizar(@PathVariable Long cidadeId,
@@ -73,6 +78,7 @@ public class CidadeController implements CidadeControllerOpenApi {
         }
     }
 
+    @SecurityConstants.Cidades.PodeEditar
     @Override
     @DeleteMapping("/{cidadeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

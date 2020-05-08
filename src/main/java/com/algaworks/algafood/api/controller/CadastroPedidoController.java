@@ -7,8 +7,10 @@ import com.algaworks.algafood.api.model.response.PedidoResponse;
 import com.algaworks.algafood.api.model.response.PedidoResumidoResponse;
 import com.algaworks.algafood.api.openapi.controller.CadastroPedidoControllerOpenApi;
 import com.algaworks.algafood.core.security.AlgafoodSecurity;
+import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
+import com.algaworks.algafood.domain.filter.PedidoFilter;
 import com.algaworks.algafood.domain.model.Pedido;
 import com.algaworks.algafood.domain.service.CadastroPedidoService;
 import com.algaworks.algafood.domain.service.UsuarioService;
@@ -46,13 +48,16 @@ public class CadastroPedidoController implements CadastroPedidoControllerOpenApi
         this.usuarioService = usuarioService;
     }
 
+    @SecurityConstants.Pedidos.PodePesquisar
     @Override
     @GetMapping
-    public PagedModel<PedidoResumidoResponse> listar(@PageableDefault(size = 10) Pageable pageable) {
-        Page<Pedido> pedidosPage = service.listar(pageable);
+    public PagedModel<PedidoResumidoResponse> listar(PedidoFilter filtro,
+                                                     @PageableDefault(size = 10) Pageable pageable) {
+        Page<Pedido> pedidosPage = service.listar(filtro, pageable);
         return pagedResourcesAssembler.toModel(pedidosPage, pedidoResumidoMapper);
     }
 
+    @SecurityConstants.Pedidos.PodeBuscar
     @Override
     @GetMapping("/{codigoPedido}")
     public PedidoResponse buscar(@PathVariable String codigoPedido) {
@@ -60,6 +65,7 @@ public class CadastroPedidoController implements CadastroPedidoControllerOpenApi
         return pedidoMapper.toModel(pedido);
     }
 
+    @SecurityConstants.Pedidos.PodeCriar
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

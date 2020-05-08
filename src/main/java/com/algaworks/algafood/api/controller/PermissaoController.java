@@ -4,6 +4,7 @@ import com.algaworks.algafood.api.model.mapper.PermissaoMapper;
 import com.algaworks.algafood.api.model.request.PermissaoRequest;
 import com.algaworks.algafood.api.model.response.PermissaoResponse;
 import com.algaworks.algafood.api.openapi.controller.PermissaoControllerOpenApi;
+import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.model.Permissao;
 import com.algaworks.algafood.domain.service.PermissaoService;
 import org.springframework.hateoas.CollectionModel;
@@ -27,6 +28,7 @@ public class PermissaoController implements PermissaoControllerOpenApi {
         this.mapper = mapper;
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeConsultar
     @Override
     @GetMapping
     public CollectionModel<PermissaoResponse> listar() {
@@ -34,6 +36,7 @@ public class PermissaoController implements PermissaoControllerOpenApi {
         return mapper.toCollectionModel(permissoes);
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeConsultar
     @Override
     @GetMapping("/{permissaoId}")
     public PermissaoResponse buscar(@PathVariable Long permissaoId) {
@@ -41,6 +44,7 @@ public class PermissaoController implements PermissaoControllerOpenApi {
         return mapper.toModel(permissao);
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeEditar
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -49,6 +53,7 @@ public class PermissaoController implements PermissaoControllerOpenApi {
         return mapper.toModel(permissao);
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeEditar
     @Override
     @PutMapping("/{permissaoId}")
     public PermissaoResponse atualizar(@PathVariable Long permissaoId,
@@ -59,6 +64,7 @@ public class PermissaoController implements PermissaoControllerOpenApi {
         return mapper.toModel(permissaoSalva);
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeEditar
     @Override
     @DeleteMapping("/{permissaoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

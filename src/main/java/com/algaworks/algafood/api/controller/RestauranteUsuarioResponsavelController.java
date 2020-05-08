@@ -3,6 +3,7 @@ package com.algaworks.algafood.api.controller;
 import com.algaworks.algafood.api.model.mapper.UsuarioMapper;
 import com.algaworks.algafood.api.model.response.UsuarioResponse;
 import com.algaworks.algafood.api.openapi.controller.RestauranteUsuarioResponsavelControllerOpenApi;
+import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.exception.UsuarioNaoEncontradoException;
 import com.algaworks.algafood.domain.model.Restaurante;
@@ -27,6 +28,7 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
         this.usuarioMapper = usuarioMapper;
     }
 
+    @SecurityConstants.Restaurantes.PodeConsultar
     @Override
     @GetMapping
     public CollectionModel<UsuarioResponse> listar(@PathVariable Long restauranteId) {
@@ -45,6 +47,7 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
                 .add(linkToRestauranteResponsavelAssociacao(restauranteId, "associar"));
     }
 
+    @SecurityConstants.Restaurantes.PodeGerenciarCadastro
     @Override
     @PutMapping("/{usuarioId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -57,6 +60,7 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
         }
     }
 
+    @SecurityConstants.Restaurantes.PodeGerenciarCadastro
     @Override
     @DeleteMapping("/{usuarioId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

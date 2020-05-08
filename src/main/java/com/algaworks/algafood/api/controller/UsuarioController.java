@@ -6,6 +6,7 @@ import com.algaworks.algafood.api.model.request.UsuarioRequest;
 import com.algaworks.algafood.api.model.request.UsuarioSenhaRequest;
 import com.algaworks.algafood.api.model.response.UsuarioResponse;
 import com.algaworks.algafood.api.openapi.controller.UsuarioControllerOpenApi;
+import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.model.Usuario;
 import com.algaworks.algafood.domain.service.UsuarioService;
 import org.springframework.hateoas.CollectionModel;
@@ -28,6 +29,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
         this.mapper = mapper;
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeConsultar
     @Override
     @GetMapping
     public CollectionModel<UsuarioResponse> listar() {
@@ -35,6 +37,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
         return mapper.toCollectionModel(usuarios);
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeConsultar
     @Override
     @GetMapping("/{usuarioId}")
     public UsuarioResponse buscar(@PathVariable Long usuarioId) {
@@ -42,6 +45,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
         return mapper.toModel(usuario);
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeEditar
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -50,6 +54,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
         return mapper.toModel(usuario);
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeAlterarUsuario
     @Override
     @PutMapping("/{usuarioId}")
     public UsuarioResponse atualizar(@PathVariable Long usuarioId,
@@ -60,6 +65,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
         return mapper.toModel(usuario);
     }
 
+    @SecurityConstants.GruposUsuariosPermissoes.PodeAlterarPropriaSenha
     @Override
     @PutMapping("/{usuarioId}/senha")
     @ResponseStatus(HttpStatus.NO_CONTENT)

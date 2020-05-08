@@ -20,8 +20,5 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Long> 
             "left join fetch r.formasPagamento where r.id = :id")
     Optional<Restaurante> findById(@Param("id") Long id);
 
-    @Query("select case when count(1) > 0 then true else false end from Restaurante rest " +
-            "join rest.responsaveis resp " +
-            "where rest.id = :restauranteId and resp.id = :usuarioId")
     boolean existsByResponsavel(Long restauranteId, Long usuarioId);
 }

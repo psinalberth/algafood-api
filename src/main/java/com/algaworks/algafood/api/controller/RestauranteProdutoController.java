@@ -4,6 +4,7 @@ import com.algaworks.algafood.api.model.mapper.ProdutoMapper;
 import com.algaworks.algafood.api.model.request.ProdutoRequest;
 import com.algaworks.algafood.api.model.response.ProdutoResponse;
 import com.algaworks.algafood.api.openapi.controller.RestauranteProdutoControllerOpenApi;
+import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.model.Produto;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.service.ProdutoService;
@@ -33,6 +34,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
         this.produtoMapper = produtoMapper;
     }
 
+    @SecurityConstants.Restaurantes.PodeConsultar
     @Override
     @GetMapping
     public CollectionModel<ProdutoResponse> listar(@PathVariable Long restauranteId,
@@ -43,6 +45,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
                 .add(linkToProdutos(restauranteId));
     }
 
+    @SecurityConstants.Restaurantes.PodeConsultar
     @Override
     @GetMapping("/{produtoId}")
     public ProdutoResponse buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
@@ -50,6 +53,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
         return produtoMapper.toModel(produto);
     }
 
+    @SecurityConstants.Restaurantes.PodeGerenciarFuncionamento
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -59,6 +63,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
         return produtoMapper.toModel(produto);
     }
 
+    @SecurityConstants.Restaurantes.PodeGerenciarFuncionamento
     @Override
     @PutMapping("/{produtoId}")
     public ProdutoResponse atualizar(@PathVariable Long restauranteId,
@@ -70,6 +75,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
         return produtoMapper.toModel(produtoSalvo);
     }
 
+    @SecurityConstants.Restaurantes.PodeGerenciarFuncionamento
     @Override
     @PutMapping("/{produtoId}/ativo")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -77,6 +83,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
         produtoService.ativar(restauranteId, produtoId);
     }
 
+    @SecurityConstants.Restaurantes.PodeGerenciarFuncionamento
     @Override
     @DeleteMapping("/{produtoId}/ativo")
     @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -4,6 +4,7 @@ import com.algaworks.algafood.api.model.mapper.EstadoMapper;
 import com.algaworks.algafood.api.model.request.EstadoRequest;
 import com.algaworks.algafood.api.model.response.EstadoResponse;
 import com.algaworks.algafood.api.openapi.controller.EstadoControllerOpenApi;
+import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.model.Estado;
 import com.algaworks.algafood.domain.service.EstadoService;
 import org.springframework.hateoas.CollectionModel;
@@ -26,6 +27,7 @@ public class EstadoController implements EstadoControllerOpenApi {
         this.mapper = mapper;
     }
 
+    @SecurityConstants.Estados.PodeConsultar
     @Override
     @GetMapping
     public CollectionModel<EstadoResponse> listar() {
@@ -33,6 +35,7 @@ public class EstadoController implements EstadoControllerOpenApi {
         return mapper.toCollectionModel(estados);
     }
 
+    @SecurityConstants.Estados.PodeConsultar
     @Override
     @GetMapping("/{estadoId}")
     public EstadoResponse buscar(@PathVariable Long estadoId) {
@@ -40,6 +43,7 @@ public class EstadoController implements EstadoControllerOpenApi {
         return mapper.toModel(estado);
     }
 
+    @SecurityConstants.Estados.PodeEditar
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -48,6 +52,7 @@ public class EstadoController implements EstadoControllerOpenApi {
         return mapper.toModel(estado);
     }
 
+    @SecurityConstants.Estados.PodeEditar
     @Override
     @PutMapping("/{estadoId}")
     public EstadoResponse atualizar(@PathVariable Long estadoId,
@@ -58,6 +63,7 @@ public class EstadoController implements EstadoControllerOpenApi {
         return mapper.toModel(estadoSalvo);
     }
 
+    @SecurityConstants.Estados.PodeEditar
     @Override
     @DeleteMapping("/{estadoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

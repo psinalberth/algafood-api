@@ -3,6 +3,7 @@ package com.algaworks.algafood.api.controller;
 import com.algaworks.algafood.api.model.mapper.FormaPagamentoMapper;
 import com.algaworks.algafood.api.model.response.FormaPagamentoResponse;
 import com.algaworks.algafood.api.openapi.controller.RestauranteFormaPagamentoControllerOpenApi;
+import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.exception.FormaPagamentoNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Restaurante;
@@ -28,6 +29,7 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
         this.formaPagamentoMapper = formaPagamentoMapper;
     }
 
+    @SecurityConstants.Restaurantes.PodeConsultar
     @Override
     @GetMapping
     public CollectionModel<FormaPagamentoResponse> listar(@PathVariable Long restauranteId) {
@@ -46,6 +48,7 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
                 .add(linkToRestauranteFormaPagamentoAssociacao(restauranteId, "associar"));
     }
 
+    @SecurityConstants.Restaurantes.PodeGerenciarFuncionamento
     @Override
     @PutMapping("/{formaPagamentoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -58,6 +61,7 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
         }
     }
 
+    @SecurityConstants.Restaurantes.PodeGerenciarFuncionamento
     @Override
     @DeleteMapping("/{formaPagamentoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -4,6 +4,7 @@ import com.algaworks.algafood.api.model.mapper.FormaPagamentoMapper;
 import com.algaworks.algafood.api.model.request.FormaPagamentoRequest;
 import com.algaworks.algafood.api.model.response.FormaPagamentoResponse;
 import com.algaworks.algafood.api.openapi.controller.FormaPagamentoControllerOpenApi;
+import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.model.FormaPagamento;
 import com.algaworks.algafood.domain.repository.FormaPagamentoRepository;
 import com.algaworks.algafood.domain.service.FormaPagamentoService;
@@ -36,6 +37,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
         this.mapper = mapper;
     }
 
+    @SecurityConstants.FormasPagamento.PodeConsultar
     @Override
     @GetMapping
     public ResponseEntity<CollectionModel<FormaPagamentoResponse>> listar(ServletWebRequest request) {
@@ -55,6 +57,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
                 .body(mapper.toCollectionModel(formasPagamento));
     }
 
+    @SecurityConstants.FormasPagamento.PodeConsultar
     @Override
     @GetMapping("/{formaPagamentoId}")
     public ResponseEntity<FormaPagamentoResponse> buscar(@PathVariable Long formaPagamentoId,
@@ -75,6 +78,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
                 .body(mapper.toModel(formaPagamento));
     }
 
+    @SecurityConstants.FormasPagamento.PodeEditar
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -83,6 +87,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
         return mapper.toModel(formaPagamento);
     }
 
+    @SecurityConstants.FormasPagamento.PodeEditar
     @Override
     @PutMapping("/{formaPagamentoId}")
     public FormaPagamentoResponse atualizar(@PathVariable Long formaPagamentoId,
@@ -93,6 +98,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
         return mapper.toModel(formaPagamentoSalva);
     }
 
+    @SecurityConstants.FormasPagamento.PodeEditar
     @Override
     @DeleteMapping("/{formaPagamentoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

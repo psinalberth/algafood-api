@@ -1,6 +1,7 @@
 package com.algaworks.algafood.api.controller;
 
 import com.algaworks.algafood.api.openapi.controller.AtualizacaoPedidoControllerOpenApi;
+import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.service.AtualizacaoPedidoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +18,7 @@ public class AtualizacaoPedidoController implements AtualizacaoPedidoControllerO
         this.service = service;
     }
 
+    @SecurityConstants.Pedidos.PodeGerenciarPedidos
     @Override
     @PutMapping("/confirmacao")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -25,6 +27,7 @@ public class AtualizacaoPedidoController implements AtualizacaoPedidoControllerO
         return ResponseEntity.noContent().build();
     }
 
+    @SecurityConstants.Pedidos.PodeGerenciarPedidos
     @Override
     @PutMapping("/entrega")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -33,6 +36,7 @@ public class AtualizacaoPedidoController implements AtualizacaoPedidoControllerO
         return ResponseEntity.noContent().build();
     }
 
+    @SecurityConstants.Pedidos.PodeGerenciarPedidos
     @Override
     @PutMapping("/cancelamento")
     @ResponseStatus(HttpStatus.NO_CONTENT)

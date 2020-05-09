@@ -199,20 +199,15 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
                                                              HttpStatus status, WebRequest request) {
 
+        var problem = ApiProblem.builder()
+                .timestamp(OffsetDateTime.now())
+                .status(status.value())
+                .userMessage(MSG_ERRO_GENERICO);
+
         if (body == null) {
-            body = ApiProblem.builder()
-                    .timestamp(OffsetDateTime.now())
-                    .title(status.getReasonPhrase())
-                    .status(status.value())
-                    .userMessage(MSG_ERRO_GENERICO)
-                    .build();
+            body = problem.title(status.getReasonPhrase()).build();
         } else if (body instanceof String) {
-            body = ApiProblem.builder()
-                    .timestamp(OffsetDateTime.now())
-                    .title((String) body)
-                    .status(status.value())
-                    .userMessage(MSG_ERRO_GENERICO)
-                    .build();
+            body = problem.title((String) body).build();
         }
 
         return super.handleExceptionInternal(ex, body, headers, status, request);

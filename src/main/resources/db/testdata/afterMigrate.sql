@@ -15,6 +15,7 @@ delete from restaurante_forma_pagamento;
 delete from restaurante_usuario_responsavel;
 delete from usuario;
 delete from usuario_grupo;
+delete from oauth_client_details;
 
 set foreign_key_checks = 1;
 
@@ -180,3 +181,36 @@ select 3, id from permissao where nome like 'CONSULTAR_%';
 -- Adiciona permissoes no grupo cadastrador
 insert into grupo_permissao (grupo_id, permissao_id)
 select 4, id from permissao where nome like '%_RESTAURANTES' or nome like '%_PRODUTOS';
+
+insert into oauth_client_details (
+  client_id, resource_ids, client_secret,
+  scope, authorized_grant_types, web_server_redirect_uri, authorities,
+  access_token_validity, refresh_token_validity, autoapprove
+)
+values (
+  'algafood-web', null, '$2y$12$uHL.DZL6M3WMwULAofH5j.VuBQVZGcklxJ6CsaeVrooOYHrMTmnca',
+  'READ,WRITE', 'password', null, null,
+  60 * 60 * 6, 60 * 24 * 60 * 60, null
+);
+
+insert into oauth_client_details (
+  client_id, resource_ids, client_secret,
+  scope, authorized_grant_types, web_server_redirect_uri, authorities,
+  access_token_validity, refresh_token_validity, autoapprove
+)
+values (
+  'foodanalytics', null, '$2y$12$uHL.DZL6M3WMwULAofH5j.VuBQVZGcklxJ6CsaeVrooOYHrMTmnca',
+  'READ,WRITE', 'authorization_code', 'http://www.foodanalytics.local:8082', null,
+  null, null, null
+);
+
+insert into oauth_client_details (
+  client_id, resource_ids, client_secret,
+  scope, authorized_grant_types, web_server_redirect_uri, authorities,
+  access_token_validity, refresh_token_validity, autoapprove
+)
+values (
+  'faturamento', null, '$2y$12$uHL.DZL6M3WMwULAofH5j.VuBQVZGcklxJ6CsaeVrooOYHrMTmnca',
+  'READ,WRITE', 'client_credentials', null, 'CONSULTAR_PEDIDOS,GERAR_RELATORIOS',
+  null, null, null
+);

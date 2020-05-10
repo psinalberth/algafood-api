@@ -49,6 +49,11 @@ algafood:
       recipient: test.algafood@gmail.com
     sender: Algafood <test.algafood@gmail.com>
     type: fake
+  jwt:
+    keystore:
+      jks-location: classpath:keys/algafood.jks
+      password:
+      keypair-alias: algafood
   logging:
     loggly:
       token:

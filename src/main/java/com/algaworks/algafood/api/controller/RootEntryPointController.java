@@ -1,5 +1,6 @@
 package com.algaworks.algafood.api.controller;
 
+import com.algaworks.algafood.core.security.AlgafoodSecurity;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,12 @@ import static com.algaworks.algafood.api.AlgaLinks.*;
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class RootEntryPointController {
 
+    final AlgafoodSecurity algafoodSecurity;
+
+    public RootEntryPointController(AlgafoodSecurity algafoodSecurity) {
+        this.algafoodSecurity = algafoodSecurity;
+    }
+
     private static class RootEntryPointModel extends RepresentationModel<RootEntryPointModel> {
 
     }
@@ -23,16 +30,39 @@ public class RootEntryPointController {
     public RootEntryPointModel root() {
         var rootEntryPoint = new RootEntryPointModel();
 
-        rootEntryPoint.add(linkToCidades("cidades"));
-        rootEntryPoint.add(linkToCozinhas("cozinhas"));
-        rootEntryPoint.add(linkToEstados("estados"));
-        rootEntryPoint.add(linkToEstatisticas("estatisticas"));
-        rootEntryPoint.add(linkToFormasPagamento("formasPagamento"));
-        rootEntryPoint.add(linkToGrupos("grupos"));
-        rootEntryPoint.add(linkToPedidos("pedidos"));
-        rootEntryPoint.add(linkToPermissoes("permissoes"));
-        rootEntryPoint.add(linkToRestaurantes("restaurantes"));
-        rootEntryPoint.add(linkToUsuarios("usuarios"));
+        if (algafoodSecurity.podeConsultarCidades()) {
+            rootEntryPoint.add(linkToCidades("cidades"));
+        }
+
+        if (algafoodSecurity.podeConsultarCozinhas()) {
+            rootEntryPoint.add(linkToCozinhas("cozinhas"));
+        }
+
+        if (algafoodSecurity.podeConsultarEstados()) {
+            rootEntryPoint.add(linkToEstados("estados"));
+        }
+
+        if (algafoodSecurity.podeConsultarEstatisticas()) {
+            rootEntryPoint.add(linkToEstatisticas("estatisticas"));
+        }
+
+        if (algafoodSecurity.podeConsultarFormasPagamento()) {
+            rootEntryPoint.add(linkToFormasPagamento("formasPagamento"));
+        }
+
+        if (algafoodSecurity.podePesquisarPedidos()) {
+            rootEntryPoint.add(linkToPedidos("pedidos"));
+        }
+
+        if (algafoodSecurity.podeConsultarRestaurantes()) {
+            rootEntryPoint.add(linkToRestaurantes("restaurantes"));
+        }
+
+        if (algafoodSecurity.podeConsultarUsuariosGruposPermissoes()) {
+            rootEntryPoint.add(linkToGrupos("grupos"));
+            rootEntryPoint.add(linkToPermissoes("permissoes"));
+            rootEntryPoint.add(linkToUsuarios("usuarios"));
+        }
 
         return rootEntryPoint;
     }

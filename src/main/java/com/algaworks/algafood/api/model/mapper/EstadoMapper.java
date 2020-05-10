@@ -3,10 +3,12 @@ package com.algaworks.algafood.api.model.mapper;
 import com.algaworks.algafood.api.model.request.EstadoIdRequest;
 import com.algaworks.algafood.api.model.request.EstadoRequest;
 import com.algaworks.algafood.api.model.response.EstadoResponse;
+import com.algaworks.algafood.core.security.AlgafoodSecurity;
 import com.algaworks.algafood.domain.model.Estado;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 
@@ -14,25 +16,36 @@ import static com.algaworks.algafood.api.AlgaLinks.linkToEstado;
 import static com.algaworks.algafood.api.AlgaLinks.linkToEstados;
 
 @Mapper
-public interface EstadoMapper extends RepresentationModelAssembler<Estado, EstadoResponse> {
+public abstract class EstadoMapper implements RepresentationModelAssembler<Estado, EstadoResponse> {
 
-    Estado toDomain(EstadoRequest request);
+    @Autowired
+    private AlgafoodSecurity algafoodSecurity;
 
-    Estado toDomain(EstadoIdRequest request);
+    public abstract Estado toDomain(EstadoRequest request);
 
-    Estado toDomainCopy(@MappingTarget Estado estado, EstadoRequest request);
+    public abstract Estado toDomain(EstadoIdRequest request);
 
-    EstadoResponse toModel(Estado estado);
+    public abstract Estado toDomainCopy(@MappingTarget Estado estado, EstadoRequest request);
+
+    public abstract EstadoResponse toModel(Estado estado);
 
     @AfterMapping
-    default void addLinks(@MappingTarget EstadoResponse estadoResponse) {
+    protected void addLinks(@MappingTarget EstadoResponse estadoResponse) {
         estadoResponse.add(linkToEstado(estadoResponse.getId()));
-        estadoResponse.add(linkToEstados("estados"));
+
+        if (algafoodSecurity.podeConsultarEstados()) {
+            estadoResponse.add(linkToEstados("estados"));
+        }
     }
 
     @Override
-    default CollectionModel<EstadoResponse> toCollectionModel(Iterable<? extends Estado> entities) {
-        return RepresentationModelAssembler.super.toCollectionModel(entities)
-                .add(linkToEstados());
+    public CollectionModel<EstadoResponse> toCollectionModel(Iterable<? extends Estado> entities) {
+        CollectionModel<EstadoResponse> estados = RepresentationModelAssembler.super.toCollectionModel(entities);
+
+        if (algafoodSecurity.podeConsultarEstados()) {
+            estados.add(linkToEstados());
+        }
+
+        return estados;
     }
 }

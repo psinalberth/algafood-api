@@ -3,6 +3,7 @@ package com.algaworks.algafood.api.controller;
 import com.algaworks.algafood.api.model.mapper.PermissaoMapper;
 import com.algaworks.algafood.api.model.response.PermissaoResponse;
 import com.algaworks.algafood.api.openapi.controller.GrupoPermissaoControllerOpenApi;
+import com.algaworks.algafood.core.security.AlgafoodSecurity;
 import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.exception.PermissaoNaoEncontradaException;
@@ -22,10 +23,13 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
 
     final GrupoService grupoService;
     final PermissaoMapper permissaoMapper;
+    final AlgafoodSecurity algafoodSecurity;
 
-    public GrupoPermissaoController(GrupoService grupoService, PermissaoMapper permissaoMapper) {
+    public GrupoPermissaoController(GrupoService grupoService, PermissaoMapper permissaoMapper,
+                                    AlgafoodSecurity algafoodSecurity) {
         this.grupoService = grupoService;
         this.permissaoMapper = permissaoMapper;
+        this.algafoodSecurity = algafoodSecurity;
     }
 
     @SecurityConstants.GruposUsuariosPermissoes.PodeConsultar
@@ -33,15 +37,20 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
     @GetMapping
     public CollectionModel<PermissaoResponse> listar(@PathVariable Long grupoId) {
         Grupo grupo = grupoService.buscarOuFalhar(grupoId);
-        CollectionModel<PermissaoResponse> permissoes = permissaoMapper.toCollectionModel(grupo.getPermissoes());
+        CollectionModel<PermissaoResponse> permissoes = permissaoMapper.toCollectionModel(grupo.getPermissoes())
+                .removeLinks();
 
-        permissoes.getContent().forEach(permissao -> {
-            permissao.add(linkToGrupoPermissaoDesassociacao(grupoId, permissao.getId(), "desassociar"));
-        });
+        if (algafoodSecurity.podeEditarUsuariosGruposPermissoes()) {
+            permissoes.getContent().forEach(permissao -> {
+                permissao.add(linkToGrupoPermissaoDesassociacao(grupoId, permissao.getId(), "desassociar"));
+            });
 
-        return permissoes.removeLinks()
-                .add(linkToGrupoPermissoes(grupoId))
-                .add(linkToGrupoPermissaoAssociacao(grupoId, "associar"));
+            permissoes.add(linkToGrupoPermissaoAssociacao(grupoId, "associar"));
+        }
+
+        permissoes.add(linkToGrupoPermissoes(grupoId));
+
+        return permissoes;
     }
 
     @SecurityConstants.GruposUsuariosPermissoes.PodeEditar

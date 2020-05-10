@@ -59,7 +59,9 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
     @ResponseStatus(HttpStatus.CREATED)
     public ProdutoResponse salvar(@PathVariable Long restauranteId,
                                   @Valid @RequestBody ProdutoRequest request) {
-        Produto produto = produtoService.salvar(produtoMapper.toDomain(restauranteId, request));
+        Produto produto = produtoMapper.toDomain(request);
+        produto.setRestaurante(restauranteService.buscarOuFalhar(restauranteId));
+        produto = produtoService.salvar(produto);
         return produtoMapper.toModel(produto);
     }
 

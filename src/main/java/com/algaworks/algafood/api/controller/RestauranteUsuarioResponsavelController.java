@@ -3,6 +3,7 @@ package com.algaworks.algafood.api.controller;
 import com.algaworks.algafood.api.model.mapper.UsuarioMapper;
 import com.algaworks.algafood.api.model.response.UsuarioResponse;
 import com.algaworks.algafood.api.openapi.controller.RestauranteUsuarioResponsavelControllerOpenApi;
+import com.algaworks.algafood.core.security.AlgafoodSecurity;
 import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.exception.UsuarioNaoEncontradoException;
@@ -22,10 +23,13 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
 
     final RestauranteService restauranteService;
     final UsuarioMapper usuarioMapper;
+    final AlgafoodSecurity algafoodSecurity;
 
-    public RestauranteUsuarioResponsavelController(RestauranteService restauranteService, UsuarioMapper usuarioMapper) {
+    public RestauranteUsuarioResponsavelController(RestauranteService restauranteService, UsuarioMapper usuarioMapper,
+                                                   AlgafoodSecurity algafoodSecurity) {
         this.restauranteService = restauranteService;
         this.usuarioMapper = usuarioMapper;
+        this.algafoodSecurity = algafoodSecurity;
     }
 
     @SecurityConstants.Restaurantes.PodeConsultar
@@ -34,17 +38,22 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
     public CollectionModel<UsuarioResponse> listar(@PathVariable Long restauranteId) {
         Restaurante restaurante = restauranteService.buscarOuFalhar(restauranteId);
         CollectionModel<UsuarioResponse> usuariosResponse =
-                usuarioMapper.toCollectionModel(restaurante.getResponsaveis());
+                usuarioMapper.toCollectionModel(restaurante.getResponsaveis())
+                .removeLinks();
 
-        usuariosResponse.getContent().forEach(usuario -> {
-            usuario.add(linkToRestauranteResponsavelDesassociacao(
-                    restauranteId, usuario.getId(), "desassociar")
-            );
-        });
+        if (algafoodSecurity.podeGerenciarCadastroRestaurantes()) {
+            usuariosResponse.getContent().forEach(usuario -> {
+                usuario.add(linkToRestauranteResponsavelDesassociacao(
+                        restauranteId, usuario.getId(), "desassociar")
+                );
+            });
 
-        return usuariosResponse.removeLinks()
-                .add(linkToRestauranteResponsaveis(restauranteId))
-                .add(linkToRestauranteResponsavelAssociacao(restauranteId, "associar"));
+            usuariosResponse.add(linkToRestauranteResponsavelAssociacao(restauranteId, "associar"));
+        }
+
+        usuariosResponse.add(linkToRestauranteResponsaveis(restauranteId));
+
+        return usuariosResponse;
     }
 
     @SecurityConstants.Restaurantes.PodeGerenciarCadastro

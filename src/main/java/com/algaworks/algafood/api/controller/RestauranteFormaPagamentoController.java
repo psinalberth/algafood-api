@@ -3,6 +3,7 @@ package com.algaworks.algafood.api.controller;
 import com.algaworks.algafood.api.model.mapper.FormaPagamentoMapper;
 import com.algaworks.algafood.api.model.response.FormaPagamentoResponse;
 import com.algaworks.algafood.api.openapi.controller.RestauranteFormaPagamentoControllerOpenApi;
+import com.algaworks.algafood.core.security.AlgafoodSecurity;
 import com.algaworks.algafood.core.security.SecurityConstants;
 import com.algaworks.algafood.domain.exception.FormaPagamentoNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
@@ -22,11 +23,14 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
 
     final RestauranteService restauranteService;
     final FormaPagamentoMapper formaPagamentoMapper;
+    final AlgafoodSecurity algafoodSecurity;
 
     public RestauranteFormaPagamentoController(RestauranteService restauranteService,
-                                               FormaPagamentoMapper formaPagamentoMapper) {
+                                               FormaPagamentoMapper formaPagamentoMapper,
+                                               AlgafoodSecurity algafoodSecurity) {
         this.restauranteService = restauranteService;
         this.formaPagamentoMapper = formaPagamentoMapper;
+        this.algafoodSecurity = algafoodSecurity;
     }
 
     @SecurityConstants.Restaurantes.PodeConsultar
@@ -35,17 +39,22 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
     public CollectionModel<FormaPagamentoResponse> listar(@PathVariable Long restauranteId) {
         Restaurante restaurante = restauranteService.buscarOuFalhar(restauranteId);
         CollectionModel<FormaPagamentoResponse> formasPagamentoResponse =
-                formaPagamentoMapper.toCollectionModel(restaurante.getFormasPagamento());
+                formaPagamentoMapper.toCollectionModel(restaurante.getFormasPagamento())
+                .removeLinks();
 
-        formasPagamentoResponse.getContent().forEach(formaPagamento -> {
-            formaPagamento.add(linkToRestauranteFormaPagamentoDesassociacao(
-                    restauranteId, formaPagamento.getId(), "desassociar")
-            );
-        });
+        if (algafoodSecurity.podeGerenciarFuncionamentoRestaurantes(restauranteId)) {
+            formasPagamentoResponse.getContent().forEach(formaPagamento -> {
+                formaPagamento.add(linkToRestauranteFormaPagamentoDesassociacao(
+                        restauranteId, formaPagamento.getId(), "desassociar")
+                );
+            });
 
-        return formasPagamentoResponse.removeLinks()
-                .add(linkToRestauranteFormasPagamento(restauranteId))
-                .add(linkToRestauranteFormaPagamentoAssociacao(restauranteId, "associar"));
+            formasPagamentoResponse.add(linkToRestauranteFormaPagamentoAssociacao(restauranteId, "associar"));
+        }
+
+        formasPagamentoResponse.add(linkToRestauranteFormasPagamento(restauranteId));
+
+        return formasPagamentoResponse;
     }
 
     @SecurityConstants.Restaurantes.PodeGerenciarFuncionamento

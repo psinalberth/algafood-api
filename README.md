@@ -17,8 +17,8 @@ objetivo do projeto é desenvolver uma API para uma empresa de delivery de comid
 ## Instalação
 ```
 cd algafood-api
-mvn compile
-mvn spring-boot:run
+./mvnw compile
+./mvnw spring-boot:run
 ```
 
 ## Documentação da API utilizando Swagger (OpenAPI)

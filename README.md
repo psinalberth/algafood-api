@@ -20,3 +20,6 @@ cd algafood-api
 mvn compile
 mvn spring-boot:run
 ```
+
+## Documentação da API utilizando Swagger (OpenAPI)
+![Documentação da API - Swagger (OpenApi)](https://user-images.githubusercontent.com/8204108/82765558-42664f80-9dee-11ea-9661-478e61737dac.PNG)
